@@ -4,85 +4,90 @@ services:
 
   zookeeper1:
     image: bitnami/zookeeper:3.7.0
+    hostname: zookeeper1
     environment:
       TZ: Asia/Shanghai
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ZOO_SERVER_ID: 1
-      ZOO_SERVERS: 0.0.0.0:2888:3888, zookeeper2:2888:3888, zookeeper3:2888:3888
+      ZOO_SERVERS: zookeeper1:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
     ports:
       - 2181:2181
       - 2888:2888
       - 3888:3888
     volumes:
-      - zookeeper:/bitnami/zookeeper
-    restart: unless-stopped
+      - zookeeper-1:/bitnami/zookeeper
+#    restart: unless-stopped
     networks:
       - flink
   zookeeper2:
     image: bitnami/zookeeper:3.7.0
+    hostname: zookeeper2
     environment:
       TZ: Asia/Shanghai
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ZOO_SERVER_ID: 1
-      ZOO_SERVERS: zookeeper2:2888:3888, 0.0.0.0:2888:3888, zookeeper3:2888:3888
+      ZOO_SERVERS: zookeeper1:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
     ports:
       - 2182:2181
       - 2889:2888
       - 3889:3888
     volumes:
-      - zookeeper:/bitnami/zookeeper
-    restart: unless-stopped
+      - zookeeper-2:/bitnami/zookeeper
+#    restart: unless-stopped
     networks:
       - flink
   zookeeper3:
     image: bitnami/zookeeper:3.7.0
+    hostname: zookeeper3
     environment:
       TZ: Asia/Shanghai
       ALLOW_ANONYMOUS_LOGIN: "yes"
       ZOO_SERVER_ID: 1
-      ZOO_SERVERS: zookeeper2:2888:3888, zookeeper3:2888:3888, 0.0.0.0:2888:3888
+      ZOO_SERVERS: zookeeper1:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
     ports:
       - 2183:2181
       - 2890:2888
       - 3890:3888
     volumes:
-      - zookeeper:/bitnami/zookeeper
-    restart: unless-stopped
+      - zookeeper-3:/bitnami/zookeeper
+#    restart: unless-stopped
     networks:
       - flink
-
-  jobmanager:
-    image: flink:1.14.0
-    environment:
-      FLINK_PROPERTIES: |
-        jobmanager.rpc.address: jobmanager
-    ports:
-      - 8081:8081
-    command: jobmanager
-    volumes:
-      - jobmanager:/flink/jobmanager
-    networks:
-      - flink
-  taskmanager:
-    image: flink:1.14.0
-    depends_on:
-      - jobmanager
-    environment:
-      FLINK_PROPERTIES: |
-        jobmanager.rpc.address: jobmanager
-        taskmanager.numberOfTaskSlots: 2
-    command: taskmanager
-    scale: 1
-    volumes:
-      - taskmanager:/flink/taskmanager
-    networks:
-      - flink
+#
+#  jobmanager:
+#    image: flink:1.14.0
+#    environment:
+#      FLINK_PROPERTIES: |
+#        jobmanager.rpc.address: jobmanager
+#    ports:
+#      - 8081:8081
+#    command: jobmanager
+#    volumes:
+#      - jobmanager:/flink/jobmanager
+#    networks:
+#      - flink
+#  taskmanager:
+#    image: flink:1.14.0
+#    depends_on:
+#      - jobmanager
+#    environment:
+#      FLINK_PROPERTIES: |
+#        jobmanager.rpc.address: jobmanager
+#        taskmanager.numberOfTaskSlots: 2
+#    command: taskmanager
+#    scale: 1
+#    volumes:
+#      - taskmanager:/flink/taskmanager
+#    networks:
+#      - flink
 
 networks:
   flink:
     driver: bridge
 
 volumes:
-  zookeeper:
+  zookeeper-1:
+  zookeeper-2:
+  zookeeper-3:
   jobmanager:
   taskmanager:
