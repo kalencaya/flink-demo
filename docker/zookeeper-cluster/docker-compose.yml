@@ -1,0 +1,67 @@
+version: '3.1'
+
+services:
+  zookeeper1:
+    image: bitnami/zookeeper:3.7.0
+    ports:
+      - '2181:2181'
+      - '2888:2888'
+      - '3888:3888'
+    volumes:
+      - zookeeper1:/bitnami/zookeeper
+    environment:
+      - TZ=Asia/Shanghai
+      - ZOO_SERVER_ID=1
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_SERVERS=0.0.0.0:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
+    restart: unless-stopped
+    networks:
+      - zookeeper
+  zookeeper2:
+    image: bitnami/zookeeper:3.7.0
+    ports:
+      - '2182:2181'
+      - '2889:2888'
+      - '3889:3888'
+    volumes:
+      - zookeeper2:/bitnami/zookeeper
+    environment:
+      - TZ=Asia/Shanghai
+      - ZOO_SERVER_ID=2
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_SERVERS=zookeeper1:2888:3888,0.0.0.0:2888:3888,zookeeper3:2888:3888
+    restart: unless-stopped
+    networks:
+      - zookeeper
+  zookeeper3:
+    image: bitnami/zookeeper:3.7.0
+    ports:
+      - '2183:2183'
+      - '2890:2888'
+      - '3890:3888'
+    volumes:
+      - zookeeper3:/bitnami/zookeeper
+    environment:
+      - TZ=Asia/Shanghai
+      - ZOO_SERVER_ID=3
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_SERVERS=zookeeper1:2888:3888,zookeeper2:2888:3888,0.0.0.0:2888:3888
+    restart: unless-stopped
+    networks:
+      - zookeeper
+  zoonavigator:
+    image: elkozmon/zoonavigator
+    ports:
+      - '9000:9000'
+    restart: unless-stopped
+    networks:
+      - zookeeper
+
+networks:
+  zookeeper:
+    driver: bridge
+
+volumes:
+  zookeeper1:
+  zookeeper2:
+  zookeeper3:
