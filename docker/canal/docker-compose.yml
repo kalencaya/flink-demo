@@ -59,7 +59,7 @@ services:
       - canal.instance.filter.regex=.*\\..*
       - canal.instance.connectionCharset=UTF-8
       - canal.instance.tsdb.enable=true
-      - canal.destinations=test
+      - canal.destinations=data_pipe
       - canal.serverMode=kafka
       - canal.mq.servers=kafka:9092
       - canal.mq.topic=kafkatest
