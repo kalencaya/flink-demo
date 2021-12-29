@@ -30,6 +30,16 @@ services:
     restart: unless-stopped
     networks:
       - canal
+  eagle:
+    image: nickzurich/kafka-eagle:2.0.8
+    depends_on:
+      - kafka
+    ports:
+      - '8048:8048'
+    environment:
+      - EFAK_CLUSTER_ZK_LIST=zookeeper:2181
+    networks:
+      - canal
 
   mysql:
     image: bitnami/mysql:8.0
