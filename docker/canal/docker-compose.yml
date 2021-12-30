@@ -27,17 +27,8 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_MAX_REQUEST_SIZE=1073741824
     restart: unless-stopped
-    networks:
-      - canal
-  eagle:
-    image: nickzurich/kafka-eagle:2.0.8
-    depends_on:
-      - kafka
-    ports:
-      - '8048:8048'
-    environment:
-      - EFAK_CLUSTER_ZK_LIST=zookeeper:2181
     networks:
       - canal
 
@@ -51,7 +42,7 @@ services:
       - 3306:3306
     volumes:
       - mysql:/bitnami/mysql
-      - ./my.cnf:/opt/bitnami/mysql/conf/my_custom.cnf:ro
+      - ./my.cnf:/opt/bitnami/mysql/conf/my_custom.cnf
     networks:
       - canal
 
@@ -61,8 +52,10 @@ services:
      - mysql
      - kafka
     environment:
-      - canal.instance.mysql.slaveId=1233
       - canal.auto.scan=false
+      - canal.serverMode=kafka
+      - kafka.bootstrap.servers=kafka:9092
+      - canal.instance.mysql.slaveId=1233
       - canal.instance.master.address=mysql:3306
       - canal.instance.dbUsername=root
       - canal.instance.dbPassword=123
@@ -70,8 +63,6 @@ services:
       - canal.instance.connectionCharset=UTF-8
       - canal.instance.tsdb.enable=true
       - canal.destinations=data_pipe
-      - canal.serverMode=kafka
-      - canal.mq.servers=kafka:9092
       - canal.mq.topic=kafkatest
       - canal.mq.partition=0
     ports:

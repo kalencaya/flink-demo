@@ -14,6 +14,7 @@ services:
     restart: unless-stopped
     networks:
       - kafka
+#      - eagle
 
   kafka:
     image: bitnami/kafka:2.2.0
@@ -21,39 +22,35 @@ services:
       - zookeeper
     ports:
       - '9092:9092'
+      - '9991:9991'
     volumes:
       - kafka:/bitnami/kafka
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - JMX_PORT=9991
     restart: unless-stopped
     networks:
       - kafka
 
-  eagle:
-    image: nickzurich/kafka-eagle:2.0.8
-    depends_on:
-      - kafka
-    ports:
-      - '8048:8048'
-    environment:
-      - EFAK_CLUSTER_ZK_LIST=zookeeper:2181
-    networks:
-      - kafka
 #  eagle:
-#    build:
-#      context: .
-#    environment:
-#      EFAK_CLUSTER_ZK_LIST: zookeeper:2181
+#    image: nnzbz/efak:2.0.8
 #    depends_on:
 #      - kafka
 #    ports:
-#      - 8048:8048
+#      - '8048:8048'
+#    environment:
+#      - ZK_HOSTS=zookeeper:2181
+#      - TZ=CST-8
+#    networks:
+#      - eagle
 
 networks:
   kafka:
     driver: bridge
+#  eagle:
+#    driver: bridge
 
 volumes:
   zookeeper:

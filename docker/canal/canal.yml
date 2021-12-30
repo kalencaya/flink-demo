@@ -20,7 +20,6 @@ services:
     image: canal/canal-server:v1.1.5
     depends_on:
      - mysql
-     - kafka
     environment:
       - canal.instance.mysql.slaveId=1233
       - canal.auto.scan=false
