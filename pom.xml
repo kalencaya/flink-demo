@@ -21,6 +21,7 @@
     <modules>
         <module>frauddetection</module>
         <module>canal-kafka</module>
+        <module>canal-demo</module>
     </modules>
 
     <dependencies>

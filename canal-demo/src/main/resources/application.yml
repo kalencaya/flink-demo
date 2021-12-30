@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: canal
+canal:
+  mode: simple
+  server: localhost:11111
+  destination: data_pipe
+
