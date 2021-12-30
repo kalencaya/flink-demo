@@ -8,7 +8,7 @@ import top.javatool.canal.client.handler.EntryHandler;
 import java.util.Map;
 
 @Slf4j
-@CanalTable(value = "all")
+@CanalTable(value = "t_user")
 @Component
 public class DefaultEntryHandler implements EntryHandler<Map<String, String>> {
 
