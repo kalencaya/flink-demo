@@ -14,6 +14,7 @@ services:
     restart: unless-stopped
     networks:
       - kafka
+      - eagle
 
   kafka:
     image: bitnami/kafka:2.2.0
@@ -32,27 +33,21 @@ services:
       - kafka
 
   eagle:
-    image: nickzurich/kafka-eagle:2.0.8
+    image: nnzbz/efak:2.0.8
     depends_on:
       - kafka
     ports:
       - '8048:8048'
     environment:
-      - EFAK_CLUSTER_ZK_LIST=zookeeper:2181
+      - ZK_HOSTS=zookeeper:2181
+      - TZ=CST-8
     networks:
-      - kafka
-#  eagle:
-#    build:
-#      context: .
-#    environment:
-#      EFAK_CLUSTER_ZK_LIST: zookeeper:2181
-#    depends_on:
-#      - kafka
-#    ports:
-#      - 8048:8048
+      - eagle
 
 networks:
   kafka:
+    driver: bridge
+  eagle:
     driver: bridge
 
 volumes:
