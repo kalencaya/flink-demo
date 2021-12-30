@@ -51,8 +51,10 @@ services:
      - mysql
      - kafka
     environment:
-      - canal.instance.mysql.slaveId=1233
       - canal.auto.scan=false
+      - canal.serverMode=kafka
+      - kafka.bootstrap.servers=kafka:9092
+      - canal.instance.mysql.slaveId=1233
       - canal.instance.master.address=mysql:3306
       - canal.instance.dbUsername=root
       - canal.instance.dbPassword=123
@@ -60,8 +62,6 @@ services:
       - canal.instance.connectionCharset=UTF-8
       - canal.instance.tsdb.enable=true
       - canal.destinations=data_pipe
-      - canal.serverMode=kafka
-      - canal.mq.servers=kafka:9092
       - canal.mq.topic=kafkatest
       - canal.mq.partition=0
     ports:
