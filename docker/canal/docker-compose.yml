@@ -27,6 +27,7 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_MAX_REQUEST_SIZE=1073741824
     restart: unless-stopped
     networks:
       - canal
