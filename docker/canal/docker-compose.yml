@@ -6,8 +6,8 @@ services:
     image: bitnami/zookeeper:3.7.0
     ports:
       - '2181:2181'
-    volumes:
-      - zookeeper:/bitnami/zookeeper
+#    volumes:
+#      - zookeeper:/bitnami/zookeeper
     environment:
       - TZ=Asia/Shanghai
       - ALLOW_ANONYMOUS_LOGIN=yes
@@ -21,8 +21,8 @@ services:
       - zookeeper
     ports:
       - '9092:9092'
-    volumes:
-      - kafka:/bitnami/kafka
+#    volumes:
+#      - kafka:/bitnami/kafka
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
@@ -41,7 +41,6 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - mysql:/bitnami/mysql
       - ./mysql/my_custom.cnf:/opt/bitnami/mysql/conf/my_custom.cnf
       - ./mysql/init.d:/docker-entrypoint-initdb.d
     networks:
@@ -53,23 +52,23 @@ services:
      - mysql
      - kafka
     environment:
-      - canal.auto.scan=false
       - canal.serverMode=kafka
+      - canal.mq.topic=kafkatest
+      - canal.mq.partition=0
       - kafka.bootstrap.servers=kafka:9092
       - canal.instance.mysql.slaveId=1233
+      - canal.auto.scan=false
       - canal.instance.master.address=mysql:3306
-      - canal.instance.dbUsername=root
-      - canal.instance.dbPassword=123
-      - canal.instance.filter.regex=.*\\..*
+      - canal.instance.dbUsername=canal
+      - canal.instance.dbPassword=canal
+      - canal.instance.filter.regex=.*\..*
       - canal.instance.connectionCharset=UTF-8
       - canal.instance.tsdb.enable=true
       - canal.destinations=data_pipe
-      - canal.mq.topic=kafkatest
-      - canal.mq.partition=0
     ports:
       - 11111:11111
-    volumes:
-      - canal:/home/admin/canal-server/logs/
+#    volumes:
+#      - canal:/home/admin/canal-server/logs/
     restart: unless-stopped
     networks:
       - canal
