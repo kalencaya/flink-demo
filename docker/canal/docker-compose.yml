@@ -43,6 +43,7 @@ services:
     volumes:
       - mysql:/bitnami/mysql
       - ./mysql/my_custom.cnf:/opt/bitnami/mysql/conf/my_custom.cnf
+      - ./mysql/init.d:/docker-entrypoint-initdb.d
     networks:
       - canal
 
