@@ -1,7 +1,6 @@
-CREATE
-database if NOT EXISTS `data_pipe` default character set utf8mb4 collate utf8mb4_unicode_ci;
-use
-`data_pipe`;
+-- DROP database if exists `data_pipe`;
+CREATE database if not exists `data_pipe` default character set utf8mb4 collate utf8mb4_unicode_ci;
+-- USE `data_pipe`;
 
 CREATE TABLE `jst_orders_single_api`
 (
