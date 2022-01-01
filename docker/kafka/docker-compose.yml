@@ -6,8 +6,8 @@ services:
     image: bitnami/zookeeper:3.7.0
     ports:
       - '2181:2181'
-    volumes:
-      - zookeeper:/bitnami/zookeeper
+#    volumes:
+#      - zookeeper:/bitnami/zookeeper
     environment:
       - TZ=Asia/Shanghai
       - ALLOW_ANONYMOUS_LOGIN=yes
@@ -23,8 +23,8 @@ services:
     ports:
       - '9092:9092'
       - '9991:9991'
-    volumes:
-      - kafka:/bitnami/kafka
+#    volumes:
+#      - kafka:/bitnami/kafka
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true

@@ -13,7 +13,7 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     restart: unless-stopped
     networks:
-      - canal
+      - kafka
 
   kafka:
     image: bitnami/kafka:2.2.0
@@ -30,7 +30,7 @@ services:
       - KAFKA_CFG_MAX_REQUEST_SIZE=1073741824
     restart: unless-stopped
     networks:
-      - canal
+      - kafka
 
   mysql:
     image: bitnami/mysql:8.0
@@ -54,8 +54,9 @@ services:
     environment:
       - canal.serverMode=kafka
       - canal.mq.topic=kafkatest
-      - canal.mq.partition=0
-      - kafka.bootstrap.servers=kafka:9092
+#      - canal.mq.partition=0
+      - canal.mq.servers=127.0.0.1:9092
+#      - kafka.bootstrap.servers=kafka:9092
       - canal.instance.mysql.slaveId=1233
       - canal.auto.scan=false
       - canal.instance.master.address=mysql:3306
@@ -75,6 +76,8 @@ services:
 
 networks:
   canal:
+    driver: bridge
+  kafka:
     driver: bridge
 
 volumes:
