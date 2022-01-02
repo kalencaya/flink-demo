@@ -12,7 +12,7 @@ public class CanalKafkaJob {
     public static void main(String[] args) throws Exception {
         KafkaSource<String> kafkaSource = KafkaSource.<String>builder()
                 .setBootstrapServers("localhost:9092")
-                .setTopics("kafkatest")
+                .setTopics("test1_skh")
                 .setGroupId("canal_kafka_job")
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .setValueOnlyDeserializer(new SimpleStringSchema())

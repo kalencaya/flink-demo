@@ -1,0 +1,4 @@
+docker exec -it canal_kafka_1 kafka-console-consumer.sh --topic data_pipe --from-beginning --bootstrap-server localhost:9092
+
+
+docker exec -it canal_kafka_1  kafka-topics.sh --bootstrap-server localhost:9092 --list

@@ -6,8 +6,8 @@ services:
     image: bitnami/zookeeper:3.7.0
     ports:
       - '2181:2181'
-#    volumes:
-#      - zookeeper:/bitnami/zookeeper
+    #    volumes:
+    #      - zookeeper:/bitnami/zookeeper
     environment:
       - TZ=Asia/Shanghai
       - ALLOW_ANONYMOUS_LOGIN=yes
@@ -24,10 +24,12 @@ services:
 #    volumes:
 #      - kafka:/bitnami/kafka
     environment:
+      - KAFKA_BROKER_ID=1
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_MAX_REQUEST_SIZE=1073741824
     restart: unless-stopped
     networks:
       - canal
@@ -49,11 +51,14 @@ services:
   canal-server:
     image: canal/canal-server:v1.1.5
     depends_on:
-     - mysql
-     - kafka
+      - mysql
+      - kafka
     environment:
       - canal.serverMode=kafka
-      - canal.mq.topic=kafkatest
+      - canal.mq.topic=example
+      - canal.mq.partition=1
+      - canal.mq.partitionsNum=3
+      - canal.mq.dynamicTopic=.*\..*
       - kafka.bootstrap.servers=kafka:9092
       - canal.auto.scan=false
       - canal.instance.master.address=mysql:3306
@@ -65,8 +70,8 @@ services:
       - canal.destinations=data_pipe
     ports:
       - 11111:11111
-#    volumes:
-#      - canal:/home/admin/canal-server/logs/
+    #    volumes:
+    #      - canal:/home/admin/canal-server/logs/
     restart: unless-stopped
     networks:
       - canal
