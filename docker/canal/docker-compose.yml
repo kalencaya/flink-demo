@@ -58,11 +58,11 @@ services:
       - kafka
     environment:
       - canal.serverMode=kafka
-      - canal.mq.topic=binlog_data_pipe
-      - kafka.bootstrap.servers=kafka:9093
       - canal.auto.scan=false
-      - canal.instance.master.address=mysql:3306
       - canal.destinations=data_pipe
+      - kafka.bootstrap.servers=kafka:9093
+      - canal.instance.master.address=mysql:3306
+      - canal.mq.topic=binlog_data_pipe
     ports:
       - 11111:11111
     #    volumes:
