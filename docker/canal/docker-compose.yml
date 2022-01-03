@@ -60,7 +60,7 @@ services:
       - canal.serverMode=kafka
       - canal.auto.scan=false
       - canal.destinations=data_pipe
-      - kafka.bootstrap.servers=kafka:9093
+      - kafka.bootstrap.servers=kafka:9092
       - canal.instance.master.address=mysql:3306
       - canal.mq.topic=binlog_data_pipe
     ports:
