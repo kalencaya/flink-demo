@@ -21,13 +21,16 @@ services:
       - zookeeper
     ports:
       - '9092:9092'
+      - '9093:9093'
 #    volumes:
 #      - kafka:/bitnami/kafka
     environment:
       - KAFKA_BROKER_ID=1
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092, EXTERNAL://localhost:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
     restart: unless-stopped
@@ -55,18 +58,10 @@ services:
       - kafka
     environment:
       - canal.serverMode=kafka
-      - canal.mq.topic=example
-      - canal.mq.partition=1
-      - canal.mq.partitionsNum=3
-      - canal.mq.dynamicTopic=.*\..*
-      - kafka.bootstrap.servers=kafka:9092
+      - canal.mq.topic=binlog_data_pipe
+      - kafka.bootstrap.servers=kafka:9093
       - canal.auto.scan=false
       - canal.instance.master.address=mysql:3306
-      - canal.instance.dbUsername=canal
-      - canal.instance.dbPassword=canal
-      - canal.instance.filter.regex=.*\..*
-      - canal.instance.connectionCharset=UTF-8
-      - canal.instance.tsdb.enable=true
       - canal.destinations=data_pipe
     ports:
       - 11111:11111
