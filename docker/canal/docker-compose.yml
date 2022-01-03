@@ -56,17 +56,18 @@ services:
     depends_on:
       - mysql
       - kafka
-    environment:
-      - canal.serverMode=kafka
-      - canal.auto.scan=false
-      - canal.destinations=data_pipe
-      - kafka.bootstrap.servers=kafka:9092
-      - canal.instance.master.address=mysql:3306
-      - canal.mq.topic=binlog_data_pipe
+#    environment:
+#      - canal.serverMode=kafka
+#      - canal.auto.scan=false
+#      - canal.destinations=data_pipe
+#      - kafka.bootstrap.servers=kafka:9092
+#      - canal.instance.master.address=mysql:3306
+#      - canal.mq.topic=binlog_data_pipe
     ports:
       - 11111:11111
-    #    volumes:
-    #      - canal:/home/admin/canal-server/logs/
+    volumes:
+      - ./canal/canal.properties:/home/admin/canal-server/conf/canal.properties
+      - ./canal/instance.properties:/home/admin/canal-server/conf/data_pipe/instance.properties
     restart: unless-stopped
     networks:
       - canal
