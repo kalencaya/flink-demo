@@ -1,0 +1,18 @@
+version: "3.1"
+
+services:
+
+  hop:
+    image: apache/hop:1.0.0
+    networks:
+      - hop
+  hop-web:
+    image: apache/hop-web:1.0.0
+    depends_on:
+      - hop
+    networks:
+      - hop
+
+networks:
+  hop:
+    driver: bridge
