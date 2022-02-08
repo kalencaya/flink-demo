@@ -6,16 +6,18 @@ services:
     image: apache/hop:1.2.0-SNAPSHOT
     environment:
       - HOP_SERVER_PORT:8080
+      - HOP_SERVER_USER:cluster
+      - HOP_SERVER_PASS:cluster
     ports:
       - 8080:8080
     networks:
       - hop
-  hop-web:
-    image: apache/hop-web:1.2.0-SNAPSHOT
-    depends_on:
-      - hop
-    networks:
-      - hop
+#  hop-web:
+#    image: apache/hop-web:1.2.0-SNAPSHOT
+#    depends_on:
+#      - hop
+#    networks:
+#      - hop
 
 networks:
   hop:
