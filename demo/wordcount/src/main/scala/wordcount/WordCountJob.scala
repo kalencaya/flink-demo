@@ -1,7 +1,5 @@
 package wordcount
 
-import java.io.File
-
 import org.apache.flink.api.common.RuntimeExecutionMode
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
