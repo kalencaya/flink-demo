@@ -1,5 +1,6 @@
 package wordcount
 
+import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 
 object WordCountJob {
@@ -12,6 +13,8 @@ object WordCountJob {
             .keyBy(tuple => tuple._1)
             .sum(1)
             .print()
+
+        env.execute()
     }
 
 }
