@@ -18,8 +18,8 @@ public class CsvJob {
 
         StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment();
         environment.setParallelism(1);
-        Order order1 = new Order(1L, 1L, 0.1, "wangqi", new Date());
-        Order order2 = new Order(2L, 2L, 0.2, "wangqi", new Date());
+        Order order1 = new Order(1L, 1L, 0.1, "王奇", new Date());
+        Order order2 = new Order(2L, 2L, 0.2, "王奇", new Date());
         DataStreamSource<Order> source = environment.fromElements(order1, order2);
 
         // writeAsCsv 只能处理 Tuple 类型的数据 这里做一下转换，也可以输出为文本
