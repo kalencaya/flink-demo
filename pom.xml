@@ -14,6 +14,9 @@
         <scala.binary.version>2.11</scala.binary.version>
         <scala.version>2.11.12</scala.version>
         <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
         <flink.version>1.14.0</flink.version>
         <log4j.version>2.14.1</log4j.version>
     </properties>
@@ -22,6 +25,7 @@
         <module>canal-kafka</module>
         <module>canal-demo</module>
         <module>demo</module>
+        <module>seatunnel-demo</module>
     </modules>
 
 
