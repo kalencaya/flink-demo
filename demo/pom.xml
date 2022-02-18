@@ -12,10 +12,6 @@
     <packaging>pom</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scala.binary.version>2.11</scala.binary.version>
-        <scala.version>2.11.12</scala.version>
-        <java.version>11</java.version>
         <flink.version>1.14.0</flink.version>
         <log4j.version>2.14.1</log4j.version>
     </properties>

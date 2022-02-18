@@ -11,7 +11,7 @@ public class JdbcSourceDemo {
 
     public static void main(String[] args) throws Exception {
         URL conf = JdbcSourceDemo.class.getClassLoader().getResource("flink.batch.conf");
-        CommandLineArgs flinkArgs = new CommandLineArgs(conf.getPath(), true);
+        CommandLineArgs flinkArgs = new CommandLineArgs(conf.getPath(), false);
         Seatunnel.run(flinkArgs, FLINK);
     }
 }
