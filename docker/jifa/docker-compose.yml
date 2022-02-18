@@ -1,0 +1,15 @@
+version: '3.1'
+
+services:
+
+  zookeeper:
+    image: jifadocker/jifa-worker:demo
+    ports:
+      - '8102:8102'
+    restart: unless-stopped
+    networks:
+      - jifa
+
+networks:
+  jifa:
+    driver: bridge
