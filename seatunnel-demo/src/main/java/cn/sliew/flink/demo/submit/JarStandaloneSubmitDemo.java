@@ -2,7 +2,6 @@ package cn.sliew.flink.demo.submit;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.client.deployment.StandaloneClusterId;
-import org.apache.flink.client.deployment.application.ApplicationRunner;
 import org.apache.flink.client.program.PackagedProgram;
 import org.apache.flink.client.program.PackagedProgramUtils;
 import org.apache.flink.client.program.rest.RestClusterClient;
@@ -16,8 +15,6 @@ import java.io.File;
 public class JarStandaloneSubmitDemo {
 
     public static void main(String[] args) throws Exception {
-        ApplicationRunner runner;
-
         String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/SocketWindowWordCount.jar";
         PackagedProgram program = PackagedProgram.newBuilder()
                 .setJarFile(new File(jarFilePath))
