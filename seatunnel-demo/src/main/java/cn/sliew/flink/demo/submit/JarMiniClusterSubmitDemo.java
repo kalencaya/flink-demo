@@ -35,9 +35,9 @@ public class JarMiniClusterSubmitDemo {
     }
 
     private static MiniCluster newCluster(Configuration config) throws Exception {
-        config.setInteger(JobManagerOptions.PORT, 0);
-        config.setInteger(ConfigConstants.LOCAL_NUMBER_TASK_MANAGER, ConfigConstants.DEFAULT_LOCAL_NUMBER_TASK_MANAGER);
-        config.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, 1);
+//        config.setInteger(JobManagerOptions.PORT, JobManagerOptions.PORT.defaultValue());
+//        config.setInteger(ConfigConstants.LOCAL_NUMBER_TASK_MANAGER, ConfigConstants.DEFAULT_LOCAL_NUMBER_TASK_MANAGER);
+//        config.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, TaskManagerOptions.NUM_TASK_SLOTS.defaultValue());
         MiniClusterConfiguration miniClusterConfig = new MiniClusterConfiguration.Builder()
                 .setConfiguration(config)
                 .build();
