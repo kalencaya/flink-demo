@@ -1,103 +1,72 @@
-version: "3.1"
+version: '3'
+
+# https://github.com/big-data-europe/docker-hadoop
 
 services:
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-    networks:
-      - hadoop
-    volumes:
-      - namenode:/hadoop/dfs/name
-    environment:
-      - CLUSTER_NAME=docker
     env_file:
       - ./hadoop.env
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints:
-          - node.hostname == akswnc4.aksw.uni-leipzig.de
-      labels:
-        traefik.docker.network: hadoop
-        traefik.port: 50070
+    environment:
+      - CLUSTER_NAME=docker
+    ports:
+      - 9870:9870
+      - 9000:9000
+      - 50070:50070
+    volumes:
+      - namenode:/hadoop/dfs/name
+    networks:
+      - hadoop
 
   datanode:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-    networks:
-      - hadoop
-    volumes:
-      - datanode:/hadoop/dfs/data
+    depends_on:
+      - namenode
     env_file:
       - ./hadoop.env
     environment:
-      SERVICE_PRECONDITION: "namenode:50070"
-    deploy:
-      mode: global
-      restart_policy:
-        condition: on-failure
-      labels:
-        traefik.docker.network: hadoop
-        traefik.port: 50075
+      - SERVICE_PRECONDITION=namenode:9870
+    ports:
+      - 50075:50075
+    volumes:
+      - datanode:/hadoop/dfs/data
+    networks:
+      - hadoop
 
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
-    networks:
-      - hadoop
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
     env_file:
       - ./hadoop.env
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints:
-          - node.hostname == akswnc4.aksw.uni-leipzig.de
-      labels:
-        traefik.docker.network: hadoop
-        traefik.port: 8088
-    healthcheck:
-      disable: true
+    environment:
+      - SERVICE_PRECONDITION=namenode:9000 namenode:9870 datanode:9864
+    ports:
+      - 8088:8088
+    networks:
+      - hadoop
 
   nodemanager:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
-    networks:
-      - hadoop
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
     env_file:
       - ./hadoop.env
-    deploy:
-      mode: global
-      restart_policy:
-        condition: on-failure
-      labels:
-        traefik.docker.network: hadoop
-        traefik.port: 8042
+    environment:
+      - SERVICE_PRECONDITION=namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088
+    ports:
+      - 8042:8042
+    networks:
+      - hadoop
 
   historyserver:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
-    networks:
-      - hadoop
-    volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
     env_file:
       - ./hadoop.env
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.hostname == akswnc4.aksw.uni-leipzig.de
-      labels:
-        traefik.docker.network: hadoop
-        traefik.port: 8188
+    environment:
+      - SERVICE_PRECONDITION=namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088
+    ports:
+      - 19888:19888
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+    networks:
+      - hadoop
 
 volumes:
   datanode:
@@ -106,5 +75,3 @@ volumes:
 
 networks:
   hadoop:
-    external:
-      name: hadoop
