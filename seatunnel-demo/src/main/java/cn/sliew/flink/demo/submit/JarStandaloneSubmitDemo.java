@@ -13,16 +13,16 @@ import org.apache.flink.runtime.jobgraph.JobGraph;
 
 import java.io.File;
 
-public class JarSubmitDemo {
+public class JarStandaloneSubmitDemo {
 
     public static void main(String[] args) throws Exception {
         ApplicationRunner runner;
 
-        String jarFilePath = "/opt/flink/examples/streaming/SocketWindowWordCount.jar";
+        String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/SocketWindowWordCount.jar";
         PackagedProgram program = PackagedProgram.newBuilder()
                 .setJarFile(new File(jarFilePath))
                 .setArguments("--port", "9000")
-                .setEntryPointClassName("")
+                .setEntryPointClassName("org.apache.flink.streaming.examples.socket.SocketWindowWordCount")
                 .build();
 
         Configuration config = new Configuration();
@@ -34,5 +34,6 @@ public class JarSubmitDemo {
         JobGraph jobGraph = PackagedProgramUtils.createJobGraph(program, config, 1, false);
 
         JobID jobId = client.submitJob(jobGraph).get();
+        System.out.println(jobId);
     }
 }
