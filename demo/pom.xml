@@ -19,6 +19,7 @@
     <modules>
         <module>frauddetection</module>
         <module>wordcount</module>
+        <module>http-connector</module>
     </modules>
 
     <dependencies>

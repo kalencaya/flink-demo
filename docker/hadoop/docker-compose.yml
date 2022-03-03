@@ -1,0 +1,8 @@
+version: "3.1"
+
+services:
+#  https://github.com/laith-leo/hadoop-dockerfile/blob/main/Dockerfile
+  hadoop:
+    image: laithleo/hadoop:3.3.1
+    ports:
+      - 8088:8088
