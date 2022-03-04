@@ -2,6 +2,7 @@ package cn.sliew.flink.demo.submit.protocol;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.flink.api.common.JobID;
 
 import java.util.List;
 
@@ -21,5 +22,5 @@ public class JarRunRequest {
 
     private Integer parallelism;
 
-    private String jobId;
+    private JobID jobId;
 }
