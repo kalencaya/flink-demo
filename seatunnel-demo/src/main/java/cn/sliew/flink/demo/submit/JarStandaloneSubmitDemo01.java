@@ -12,7 +12,7 @@ import org.apache.flink.runtime.jobgraph.JobGraph;
 
 import java.io.File;
 
-public class JarStandaloneSubmitDemo {
+public class JarStandaloneSubmitDemo01 {
 
     public static void main(String[] args) throws Exception {
         String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/SocketWindowWordCount.jar";
