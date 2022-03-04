@@ -8,6 +8,8 @@ import org.apache.flink.client.deployment.DefaultClusterClientServiceLoader;
 import org.apache.flink.client.program.*;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.DeploymentOptions;
+import org.apache.flink.configuration.GlobalConfiguration;
+import org.apache.flink.configuration.JobManagerOptions;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.yarn.YarnClusterDescriptor;
@@ -35,7 +37,7 @@ public class JarYarnPerJobSubmitDemo {
 
 
     public static void main(String[] args) throws Exception {
-        Configuration config = new Configuration();
+        Configuration config = GlobalConfiguration.loadConfiguration(FLINK_CONF_DIR, new Configuration());
         ClusterClientFactory<ApplicationId> factory = newClientFactory(config);
         YarnClusterDescriptor clusterDescriptor = createClusterDescriptor(factory, config);
         ClusterSpecification clusterSpecification = createClusterSpecification();
@@ -48,6 +50,7 @@ public class JarYarnPerJobSubmitDemo {
     }
 
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
+        config.setString(JobManagerOptions.ADDRESS, YarnDeploymentTarget.PER_JOB.getName());
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
