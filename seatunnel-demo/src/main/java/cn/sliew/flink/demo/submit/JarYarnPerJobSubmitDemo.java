@@ -1,6 +1,7 @@
 package cn.sliew.flink.demo.submit;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.client.deployment.ClusterClientFactory;
 import org.apache.flink.client.deployment.ClusterDeploymentException;
 import org.apache.flink.client.deployment.ClusterSpecification;
@@ -29,12 +30,12 @@ import java.util.List;
 @Slf4j
 public class JarYarnPerJobSubmitDemo {
 
-    private static final String FLINK_HOME = System.getenv("FLINK_HOME");
+//    private static final String FLINK_HOME = System.getenv("FLINK_HOME");
+    private static final String FLINK_HOME = "/Users/wangqi/Documents/software/flink/flink-1.13.6";
     private static final String FLINK_CONF_DIR = FLINK_HOME + "/conf";
     private static final String FLINK_PLUGINS_DIR = FLINK_HOME + "/plugins";
     private static final String FLINK_LIB_DIR = FLINK_HOME + "/lib";
     private static final String FLINK_DIST_JAR = FLINK_HOME + "/lib/flink-dist_2.11-1.13.6.jar";
-
 
     public static void main(String[] args) throws Exception {
         Configuration config = GlobalConfiguration.loadConfiguration(FLINK_CONF_DIR, new Configuration());
@@ -43,10 +44,12 @@ public class JarYarnPerJobSubmitDemo {
         ClusterSpecification clusterSpecification = createClusterSpecification();
         JobGraph jobGraph = createJobGraph(config);
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification, jobGraph);
+        JobID jobID = clusterClient.submitJob(jobGraph).get();
+        System.out.println(jobID);
     }
 
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
-        config.setString(JobManagerOptions.ADDRESS, YarnDeploymentTarget.PER_JOB.getName());
+        config.setString(JobManagerOptions.ADDRESS, "localhost");
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
@@ -79,11 +82,12 @@ public class JarYarnPerJobSubmitDemo {
     }
 
     private static JobGraph createJobGraph(Configuration config) throws ProgramInvocationException, UnknownHostException {
-        String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/SocketWindowWordCount.jar";
+//        String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/SocketWindowWordCount.jar";
+        String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/TopSpeedWindowing.jar";
         PackagedProgram program = PackagedProgram.newBuilder()
                 .setJarFile(new File(jarFilePath))
-                .setArguments("--port", "9000", "--host", InetAddress.getLocalHost().getHostAddress())
-                .setEntryPointClassName("org.apache.flink.streaming.examples.socket.SocketWindowWordCount")
+//                .setArguments("--port", "9000", "--host", InetAddress.getLocalHost().getHostAddress())
+                .setEntryPointClassName("org.apache.flink.streaming.examples.windowing.TopSpeedWindowing")
                 .build();
         return PackagedProgramUtils.createJobGraph(program, config, 1, false);
     }
