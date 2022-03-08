@@ -49,7 +49,7 @@ public class JarYarnPerJobSubmitDemo {
     }
 
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
-        config.setString(JobManagerOptions.ADDRESS, "localhost");
+//        config.setString(JobManagerOptions.ADDRESS, "localhost");
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
