@@ -43,10 +43,6 @@ public class JarYarnPerJobSubmitDemo {
         ClusterSpecification clusterSpecification = createClusterSpecification();
         JobGraph jobGraph = createJobGraph(config);
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification, jobGraph);
-
-
-
-
     }
 
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
