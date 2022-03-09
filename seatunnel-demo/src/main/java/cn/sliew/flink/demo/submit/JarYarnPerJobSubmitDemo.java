@@ -29,6 +29,10 @@ import java.util.List;
 public class JarYarnPerJobSubmitDemo {
 
 //    private static final String FLINK_HOME = System.getenv("FLINK_HOME");
+    private static final String HADOOP_HOME = "/Users/wangqi/Documents/software/hadoop/hadoop-3.2.1";
+    private static final String HADOOP_CONF_DIR = HADOOP_HOME + "/etc/hadoop";
+
+
     private static final String FLINK_HOME = "/Users/wangqi/Documents/software/flink/flink-1.13.6";
     private static final String FLINK_CONF_DIR = FLINK_HOME + "/conf";
     private static final String FLINK_PLUGINS_DIR = FLINK_HOME + "/plugins";
@@ -58,7 +62,7 @@ public class JarYarnPerJobSubmitDemo {
      */
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
 //        config.setString(JobManagerOptions.ADDRESS, "localhost");
-        config.setString(CoreOptions.FLINK_YARN_CONF_DIR, "");
+        config.setString(CoreOptions.FLINK_YARN_CONF_DIR, HADOOP_CONF_DIR);
 //        config.setString(CoreOptions.FLINK_HADOOP_CONF_DIR, "");
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
@@ -66,12 +70,26 @@ public class JarYarnPerJobSubmitDemo {
         return serviceLoader.getClusterClientFactory(config);
     }
 
+    /**
+     * 也可以通过 {@link YarnConfigOptions#FLINK_DIST_JAR} 配置 flink-dist-xxx.jar
+     * {@link YarnConfigOptions#SHIP_FILES} 配置 ship jars.
+     */
     private static YarnClusterDescriptor createClusterDescriptor(ClusterClientFactory<ApplicationId> factory, Configuration config) throws MalformedURLException {
         YarnClusterDescriptor clusterDescriptor = (YarnClusterDescriptor) factory.createClusterDescriptor(config);
         boolean isRemoteJarPath =
                 !CollectionUtil.isNullOrEmpty(config.get(YarnConfigOptions.PROVIDED_LIB_DIRS));
         List<File> shipFiles = new ArrayList<>();
-        shipFiles.addAll(Arrays.asList(new File(FLINK_PLUGINS_DIR)));
+        File[] plugins = new File(FLINK_PLUGINS_DIR).listFiles();
+        if (plugins != null) {
+            for (File plugin : plugins) {
+                if (plugin.isDirectory() == false) {
+                    continue;
+                }
+                if (!isRemoteJarPath) {
+                    shipFiles.addAll(Arrays.asList(plugin.listFiles()));
+                }
+            }
+        }
         File[] jars = new File(FLINK_LIB_DIR).listFiles();
         if (jars != null) {
             for (File jar : jars) {
@@ -82,6 +100,7 @@ public class JarYarnPerJobSubmitDemo {
                 }
             }
         }
+//        shipFiles.forEach(file -> System.out.println(file.getAbsolutePath()));
         clusterDescriptor.addShipFiles(shipFiles);
         return clusterDescriptor;
     }
