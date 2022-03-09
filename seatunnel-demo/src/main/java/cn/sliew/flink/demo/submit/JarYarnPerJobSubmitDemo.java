@@ -7,11 +7,9 @@ import org.apache.flink.client.deployment.ClusterDeploymentException;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.DefaultClusterClientServiceLoader;
 import org.apache.flink.client.program.*;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.DeploymentOptions;
-import org.apache.flink.configuration.GlobalConfiguration;
-import org.apache.flink.configuration.JobManagerOptions;
+import org.apache.flink.configuration.*;
 import org.apache.flink.runtime.jobgraph.JobGraph;
+import org.apache.flink.runtime.util.HadoopUtils;
 import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.flink.yarn.configuration.YarnConfigOptions;
@@ -35,6 +33,7 @@ public class JarYarnPerJobSubmitDemo {
     private static final String FLINK_CONF_DIR = FLINK_HOME + "/conf";
     private static final String FLINK_PLUGINS_DIR = FLINK_HOME + "/plugins";
     private static final String FLINK_LIB_DIR = FLINK_HOME + "/lib";
+    private static final String FLINK_EXAMPLES_DIR = FLINK_HOME + "/examples";
     private static final String FLINK_DIST_JAR = FLINK_HOME + "/lib/flink-dist_2.11-1.13.6.jar";
 
     public static void main(String[] args) throws Exception {
@@ -48,8 +47,19 @@ public class JarYarnPerJobSubmitDemo {
         System.out.println(jobID);
     }
 
+    /**
+     * 需提供 hadoop 的配置文件，以便 flink 获取 hadoop 集群地址。
+     * 当使用 flink on yarn 配置时，不需要配置 {@link JobManagerOptions#ADDRESS} 参数，
+     * 配置 hadoop 配置文件，可以通过 {@link CoreOptions#FLINK_YARN_CONF_DIR} 和 {@link CoreOptions#FLINK_HADOOP_CONF_DIR}，
+     * {@link CoreOptions#FLINK_YARN_CONF_DIR} 拥有更高的优先级，当二者都未配置时，flink 会尝试从 HADOOP_HOME 环境变量
+     * 获取 hadoop 配置。
+     *
+     * @see HadoopUtils#getHadoopConfiguration(Configuration)
+     */
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
 //        config.setString(JobManagerOptions.ADDRESS, "localhost");
+        config.setString(CoreOptions.FLINK_YARN_CONF_DIR, "");
+//        config.setString(CoreOptions.FLINK_HADOOP_CONF_DIR, "");
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
@@ -83,7 +93,7 @@ public class JarYarnPerJobSubmitDemo {
 
     private static JobGraph createJobGraph(Configuration config) throws ProgramInvocationException, UnknownHostException {
 //        String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/SocketWindowWordCount.jar";
-        String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/TopSpeedWindowing.jar";
+        String jarFilePath = FLINK_EXAMPLES_DIR + "/streaming/TopSpeedWindowing.jar";
         PackagedProgram program = PackagedProgram.newBuilder()
                 .setJarFile(new File(jarFilePath))
 //                .setArguments("--port", "9000", "--host", InetAddress.getLocalHost().getHostAddress())
