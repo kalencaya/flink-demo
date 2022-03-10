@@ -18,7 +18,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 
 import java.io.File;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -28,8 +27,9 @@ import java.util.List;
 @Slf4j
 public class JarYarnPerJobSubmitDemo {
 
-//    private static final String FLINK_HOME = System.getenv("FLINK_HOME");
-    private static final String HADOOP_HOME = "/Users/wangqi/Documents/software/hadoop/hadoop-3.2.1";
+    //    private static final String FLINK_HOME = System.getenv("FLINK_HOME");
+    private static final String HADOOP_HOME = System.getenv("HADOOP_HOME");
+    //    private static final String HADOOP_HOME = "/Users/wangqi/Documents/software/hadoop/hadoop-3.2.1";
     private static final String HADOOP_CONF_DIR = HADOOP_HOME + "/etc/hadoop";
 
 
@@ -57,13 +57,15 @@ public class JarYarnPerJobSubmitDemo {
      * 配置 hadoop 配置文件，可以通过 {@link CoreOptions#FLINK_YARN_CONF_DIR} 和 {@link CoreOptions#FLINK_HADOOP_CONF_DIR}，
      * {@link CoreOptions#FLINK_YARN_CONF_DIR} 拥有更高的优先级，当二者都未配置时，flink 会尝试从 HADOOP_HOME 环境变量
      * 获取 hadoop 配置。
+     * {@link CoreOptions#FLINK_YARN_CONF_DIR} 和 {@link CoreOptions#FLINK_HADOOP_CONF_DIR} 只支持环境变量形式设置，
+     * 设置两个参数的目的仅仅是为了文档的自动生成.
      *
      * @see HadoopUtils#getHadoopConfiguration(Configuration)
      */
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
 //        config.setString(JobManagerOptions.ADDRESS, "localhost");
-        config.setString(CoreOptions.FLINK_YARN_CONF_DIR, HADOOP_CONF_DIR);
-//        config.setString(CoreOptions.FLINK_HADOOP_CONF_DIR, "");
+//        config.setString(CoreOptions.FLINK_YARN_CONF_DIR, HADOOP_CONF_DIR);
+//        config.setString(CoreOptions.FLINK_HADOOP_CONF_DIR, HADOOP_CONF_DIR);
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();

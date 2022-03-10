@@ -12,9 +12,8 @@ services:
     ports:
       - 9870:9870
       - 9000:9000
-      - 50070:50070
-#    volumes:
-#      - namenode:/hadoop/dfs/name
+    volumes:
+      - namenode:/hadoop/dfs/name
     networks:
       - hadoop
 
@@ -27,9 +26,9 @@ services:
     environment:
       - SERVICE_PRECONDITION=namenode:9870
     ports:
-      - 50075:50075
-#    volumes:
-#      - datanode:/hadoop/dfs/data
+      - 9864:9864
+    volumes:
+      - datanode:/hadoop/dfs/data
     networks:
       - hadoop
 
@@ -67,15 +66,15 @@ services:
     ports:
       - 19888:19888
       - 8188:8188
-#    volumes:
-#      - hadoop_historyserver:/hadoop/yarn/timeline
+    volumes:
+      - historyserver:/hadoop/yarn/timeline
     networks:
       - hadoop
 
 volumes:
   datanode:
   namenode:
-  hadoop_historyserver:
+  historyserver:
 
 networks:
   hadoop:
