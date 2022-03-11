@@ -73,9 +73,12 @@ public class JarStandaloneSubmitDemo02 {
     private static ClusterClientFactory<StandaloneClusterId> newClientFactory(Configuration config) {
         config.setString(JobManagerOptions.ADDRESS, "localhost");
         config.setInteger(JobManagerOptions.PORT, 8081);
+
+        // stanalone 模式下的 webInterfaceUrl
 //        config.setString(RestOptions.ADDRESS, "localhost");
 //        config.setInteger(RestOptions.PORT, 8081);
 
+        // yarn session 模式下预先创建的 cluster 的 webInterfaceUrl
         config.setString(RestOptions.ADDRESS, "192.168.12.19");
         config.setInteger(RestOptions.PORT, 49998);
         config.setString(DeploymentOptions.TARGET, RemoteExecutor.NAME);
