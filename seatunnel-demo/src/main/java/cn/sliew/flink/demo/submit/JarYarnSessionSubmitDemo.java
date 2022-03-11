@@ -24,7 +24,7 @@ public class JarYarnSessionSubmitDemo {
         // 1. 通过 application.id 获取 集群
         ClusterClient<ApplicationId> clusterClient = clusterDescriptor.retrieve(clusterId).getClusterClient();
         // 2. 提交任务
-        JobGraph jobGraph = JobGraphUtil.createJobGraph(config);
+        JobGraph jobGraph = Util.createJobGraph(config);
         JobID jobID = clusterClient.submitJob(jobGraph).get();
         System.out.println(jobID);
     }

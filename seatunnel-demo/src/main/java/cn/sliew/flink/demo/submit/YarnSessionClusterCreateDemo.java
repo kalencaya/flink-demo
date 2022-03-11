@@ -8,8 +8,7 @@ import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.DefaultClusterClientServiceLoader;
 import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.client.program.ClusterClientProvider;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.DeploymentOptions;
+import org.apache.flink.configuration.*;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
@@ -22,11 +21,15 @@ public class YarnSessionClusterCreateDemo {
         Configuration config = new Configuration();
         ClusterClientFactory<ApplicationId> factory = newClientFactory(config);
         YarnClusterDescriptor clusterDescriptor = (YarnClusterDescriptor) factory.createClusterDescriptor(config);
+        Util.addJarFiles(clusterDescriptor, config);
+
+        config.setLong(JobManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
+        config.setLong(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
         ClusterSpecification clusterSpecification = createClusterSpecification();
         // 1. 创建 session 集群
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification);
         // 2. 提交任务
-        JobGraph jobGraph = JobGraphUtil.createJobGraph(config);
+        JobGraph jobGraph = Util.createJobGraph(config);
         JobID jobID = clusterClient.submitJob(jobGraph).get();
         System.out.println(jobID);
     }
@@ -40,6 +43,9 @@ public class YarnSessionClusterCreateDemo {
 
     private static ClusterSpecification createClusterSpecification() {
         return new ClusterSpecification.ClusterSpecificationBuilder()
+                .setMasterMemoryMB(2048)
+                .setTaskManagerMemoryMB(2048)
+                .setSlotsPerTaskManager(2)
                 .createClusterSpecification();
     }
 
