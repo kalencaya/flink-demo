@@ -30,7 +30,7 @@ public enum Util {
     private static final String FLINK_PLUGINS_DIR = FLINK_HOME + "/plugins";
     private static final String FLINK_LIB_DIR = FLINK_HOME + "/lib";
     private static final String FLINK_EXAMPLES_DIR = FLINK_HOME + "/examples";
-    private static final String FLINK_DIST_JAR = FLINK_HOME + "/lib/flink-dist_2.11-1.13.6.jar";
+    public static final String FLINK_DIST_JAR = FLINK_HOME + "/lib/flink-dist_2.11-1.13.6.jar";
 
     private static final String HADOOP_CONF_DIR = HADOOP_HOME + "/etc/hadoop";
 
@@ -81,9 +81,9 @@ public enum Util {
 
     public static ClusterSpecification createClusterSpecification() {
         return new ClusterSpecification.ClusterSpecificationBuilder()
-                .setMasterMemoryMB(2048)
-                .setTaskManagerMemoryMB(2048)
-                .setSlotsPerTaskManager(2)
+                .setMasterMemoryMB(4096)
+                .setTaskManagerMemoryMB(4096)
+                .setSlotsPerTaskManager(4)
                 .createClusterSpecification();
     }
 }

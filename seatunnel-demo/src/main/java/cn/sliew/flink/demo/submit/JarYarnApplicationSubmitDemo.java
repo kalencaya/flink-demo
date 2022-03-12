@@ -1,7 +1,6 @@
 package cn.sliew.flink.demo.submit;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.flink.api.common.JobID;
 import org.apache.flink.client.deployment.ClusterClientFactory;
 import org.apache.flink.client.deployment.ClusterDeploymentException;
 import org.apache.flink.client.deployment.ClusterSpecification;
@@ -10,13 +9,14 @@ import org.apache.flink.client.deployment.application.ApplicationConfiguration;
 import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.client.program.ClusterClientProvider;
 import org.apache.flink.configuration.*;
-import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.yarn.YarnClusterDescriptor;
+import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Collections;
 
 @Slf4j
@@ -30,7 +30,11 @@ public class JarYarnApplicationSubmitDemo {
 
         config.setLong(JobManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
         config.setLong(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
-        Util.addJarFiles(clusterDescriptor, config);
+
+        config.set(YarnConfigOptions.PROVIDED_LIB_DIRS, Arrays.asList(new String[]{"hdfs://hadoop:9000/flink/1.13.6"}));
+        config.set(YarnConfigOptions.FLINK_DIST_JAR, "hdfs://hadoop:9000/flink/1.13.6/flink-dist_2.11-1.13.6.jar");
+//        Util.addJarFiles(clusterDescriptor, config);
+
         ConfigUtils.encodeCollectionToConfig(config, PipelineOptions.JARS, Collections.singletonList(new File(Util.JAR_FILE_PATH)), Object::toString);
         ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration(new String[]{}, Util.ENTRY_POINT_CLASS_NAME);
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification, applicationConfiguration);
@@ -45,7 +49,6 @@ public class JarYarnApplicationSubmitDemo {
 
     private static YarnClusterDescriptor createClusterDescriptor(ClusterClientFactory<ApplicationId> factory, Configuration config) throws MalformedURLException {
         YarnClusterDescriptor clusterDescriptor = (YarnClusterDescriptor) factory.createClusterDescriptor(config);
-        Util.addJarFiles(clusterDescriptor, config);
         return clusterDescriptor;
     }
 
