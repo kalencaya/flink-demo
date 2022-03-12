@@ -1,5 +1,6 @@
 package cn.sliew.flink.demo.submit;
 
+import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.program.PackagedProgram;
 import org.apache.flink.client.program.PackagedProgramUtils;
 import org.apache.flink.client.program.ProgramInvocationException;
@@ -76,5 +77,13 @@ public enum Util {
         }
 //        shipFiles.forEach(file -> System.out.println(file.getAbsolutePath()));
         clusterDescriptor.addShipFiles(shipFiles);
+    }
+
+    public static ClusterSpecification createClusterSpecification() {
+        return new ClusterSpecification.ClusterSpecificationBuilder()
+                .setMasterMemoryMB(2048)
+                .setTaskManagerMemoryMB(2048)
+                .setSlotsPerTaskManager(2)
+                .createClusterSpecification();
     }
 }

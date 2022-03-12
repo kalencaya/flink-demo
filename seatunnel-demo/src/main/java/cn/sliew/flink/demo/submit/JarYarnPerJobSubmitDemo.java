@@ -31,8 +31,6 @@ public class JarYarnPerJobSubmitDemo {
         ClusterSpecification clusterSpecification = createClusterSpecification();
         JobGraph jobGraph = Util.createJobGraph(config);
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification, jobGraph);
-        JobID jobID = clusterClient.submitJob(jobGraph).get();
-        System.out.println(jobID);
     }
 
     /**

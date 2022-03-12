@@ -25,7 +25,7 @@ public class YarnSessionClusterCreateDemo {
 
         config.setLong(JobManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
         config.setLong(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
-        ClusterSpecification clusterSpecification = createClusterSpecification();
+        ClusterSpecification clusterSpecification = Util.createClusterSpecification();
         // 1. 创建 session 集群
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification);
         // 2. 提交任务
@@ -39,14 +39,6 @@ public class YarnSessionClusterCreateDemo {
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
         return serviceLoader.getClusterClientFactory(config);
-    }
-
-    private static ClusterSpecification createClusterSpecification() {
-        return new ClusterSpecification.ClusterSpecificationBuilder()
-                .setMasterMemoryMB(2048)
-                .setTaskManagerMemoryMB(2048)
-                .setSlotsPerTaskManager(2)
-                .createClusterSpecification();
     }
 
     private static ClusterClient<ApplicationId> createClusterClient(YarnClusterDescriptor clusterDescriptor,
