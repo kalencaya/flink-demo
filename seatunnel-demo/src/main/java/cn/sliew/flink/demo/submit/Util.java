@@ -81,9 +81,9 @@ public enum Util {
 
     public static ClusterSpecification createClusterSpecification() {
         return new ClusterSpecification.ClusterSpecificationBuilder()
-                .setMasterMemoryMB(4096)
-                .setTaskManagerMemoryMB(4096)
-                .setSlotsPerTaskManager(4)
+                .setMasterMemoryMB(2048)
+                .setTaskManagerMemoryMB(2048)
+                .setSlotsPerTaskManager(1)
                 .createClusterSpecification();
     }
 }
