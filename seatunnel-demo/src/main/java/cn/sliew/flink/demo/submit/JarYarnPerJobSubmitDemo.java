@@ -28,7 +28,7 @@ public class JarYarnPerJobSubmitDemo {
         Configuration config = Util.loadConfiguration();
         ClusterClientFactory<ApplicationId> factory = newClientFactory(config);
         YarnClusterDescriptor clusterDescriptor = createClusterDescriptor(factory, config);
-        ClusterSpecification clusterSpecification = createClusterSpecification();
+        ClusterSpecification clusterSpecification = Util.createClusterSpecification();
         JobGraph jobGraph = Util.createJobGraph(config);
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification, jobGraph);
     }
@@ -62,11 +62,6 @@ public class JarYarnPerJobSubmitDemo {
         YarnClusterDescriptor clusterDescriptor = (YarnClusterDescriptor) factory.createClusterDescriptor(config);
         Util.addJarFiles(clusterDescriptor, config);
         return clusterDescriptor;
-    }
-
-    private static ClusterSpecification createClusterSpecification() {
-        return new ClusterSpecification.ClusterSpecificationBuilder()
-                .createClusterSpecification();
     }
 
     private static ClusterClient<ApplicationId> createClusterClient(YarnClusterDescriptor clusterDescriptor,
