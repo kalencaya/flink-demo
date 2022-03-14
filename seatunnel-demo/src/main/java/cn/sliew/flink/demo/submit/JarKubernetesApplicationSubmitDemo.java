@@ -10,6 +10,8 @@ import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.client.program.ClusterClientProvider;
 import org.apache.flink.configuration.*;
 import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
+import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
+import org.apache.flink.kubernetes.configuration.KubernetesConfigOptionsInternal;
 import org.apache.flink.kubernetes.configuration.KubernetesDeploymentTarget;
 
 import java.io.File;
@@ -20,6 +22,8 @@ import java.util.Collections;
 public class JarKubernetesApplicationSubmitDemo {
 
     public static void main(String[] args) throws Exception {
+        String imageName = buildImage();
+
         Configuration config = Util.loadConfiguration();
         ClusterClientFactory<String> factory = newClientFactory(config);
         KubernetesClusterDescriptor clusterDescriptor = createClusterDescriptor(factory, config);
@@ -29,8 +33,13 @@ public class JarKubernetesApplicationSubmitDemo {
         config.setLong(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(4096).getBytes());
 
         ConfigUtils.encodeCollectionToConfig(config, PipelineOptions.JARS, Collections.singletonList(new File(Util.LOCAL_JAR_FILE_PATH)), Object::toString);
+        config.setString(KubernetesConfigOptions.CONTAINER_IMAGE, imageName);
         ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration(new String[]{}, Util.ENTRY_POINT_CLASS_NAME);
         ClusterClient<String> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification, applicationConfiguration);
+    }
+
+    private static String buildImage() {
+        return "";
     }
 
     private static ClusterClientFactory<String> newClientFactory(Configuration config) {
