@@ -25,6 +25,7 @@
         <module>canal-demo</module>
         <module>demo</module>
         <module>seatunnel-demo</module>
+        <module>demo/wikiedits</module>
     </modules>
 
     <repositories>
