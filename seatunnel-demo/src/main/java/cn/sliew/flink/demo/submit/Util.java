@@ -35,7 +35,7 @@ public enum Util {
     private static final String HADOOP_CONF_DIR = HADOOP_HOME + "/etc/hadoop";
 
     public static final String JAR_FILE_PATH = FLINK_EXAMPLES_DIR + "/streaming/TopSpeedWindowing.jar";
-    public static final String LOCAL_JAR_FILE_PATH = "local://" + JAR_FILE_PATH;
+    public static final String LOCAL_JAR_FILE_PATH = "local:///opt/flink/usrlib/TopSpeedWindowing.jar";
     public static final String ENTRY_POINT_CLASS_NAME = "org.apache.flink.streaming.examples.windowing.TopSpeedWindowing";
 
     public static Configuration loadConfiguration() {
