@@ -11,7 +11,6 @@ import org.apache.flink.client.program.ClusterClientProvider;
 import org.apache.flink.configuration.*;
 import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
-import org.apache.flink.kubernetes.configuration.KubernetesConfigOptionsInternal;
 import org.apache.flink.kubernetes.configuration.KubernetesDeploymentTarget;
 
 import java.io.File;

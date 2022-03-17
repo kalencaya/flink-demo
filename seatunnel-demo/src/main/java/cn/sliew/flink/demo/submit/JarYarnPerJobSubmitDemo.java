@@ -1,17 +1,13 @@
 package cn.sliew.flink.demo.submit;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.flink.api.common.JobID;
 import org.apache.flink.client.deployment.ClusterClientFactory;
 import org.apache.flink.client.deployment.ClusterDeploymentException;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.DefaultClusterClientServiceLoader;
 import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.client.program.ClusterClientProvider;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.CoreOptions;
-import org.apache.flink.configuration.DeploymentOptions;
-import org.apache.flink.configuration.JobManagerOptions;
+import org.apache.flink.configuration.*;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.runtime.util.HadoopUtils;
 import org.apache.flink.yarn.YarnClusterDescriptor;
@@ -28,6 +24,9 @@ public class JarYarnPerJobSubmitDemo {
         Configuration config = Util.loadConfiguration();
         ClusterClientFactory<ApplicationId> factory = newClientFactory(config);
         YarnClusterDescriptor clusterDescriptor = createClusterDescriptor(factory, config);
+        config.setLong(JobManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
+        config.setLong(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(2048).getBytes());
+        config.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, 2);
         ClusterSpecification clusterSpecification = Util.createClusterSpecification();
         JobGraph jobGraph = Util.createJobGraph(config);
         ClusterClient<ApplicationId> clusterClient = createClusterClient(clusterDescriptor, clusterSpecification, jobGraph);
