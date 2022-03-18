@@ -17,6 +17,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Collections;
 
+/**
+ * 首先通过命令 docker build -f Dockerfile -t flink-example:1 . 创建镜像
+ */
 @Slf4j
 public class JarKubernetesApplicationSubmitDemo {
 
@@ -38,7 +41,7 @@ public class JarKubernetesApplicationSubmitDemo {
     }
 
     private static String buildImage() {
-        return "";
+        return "flink-example:1";
     }
 
     private static ClusterClientFactory<String> newClientFactory(Configuration config) {
