@@ -1,0 +1,282 @@
+nameOverride: ''
+fullnameOverride: ''
+debug: false
+serviceAccount:
+  create: false
+  name: null
+  extraAnnotations: null
+server:
+  enabled: true
+  sidecarContainers: null
+  image:
+    repository: temporalio/server
+    tag: 1.15.1
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  metrics:
+    annotations:
+      enabled: true
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+      additionalLabels: {}
+      metricRelabelings: []
+    prometheus:
+      timerType: histogram
+  podAnnotations: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  additionalVolumes: []
+  additionalVolumeMounts: []
+  config:
+    logLevel: 'debug,info'
+    numHistoryShards: 512
+    persistence:
+      defaultStore: default
+      additionalStores: {}
+      default:
+        driver: sql
+        cassandra:
+          hosts: []
+          keyspace: temporal
+          user: user
+          password: password
+          existingSecret: ''
+          replicationFactor: 1
+          consistency:
+            default:
+              consistency: local_quorum
+              serialConsistency: local_serial
+        sql:
+          driver: mysql
+          host: mysql
+          port: 3306
+          database: temporal
+          user: temporal
+          password: temporal
+          existingSecret: ''
+          secretName: ''
+          maxConns: 20
+          maxConnLifetime: 1h
+      visibility:
+        driver: sql
+        cassandra:
+          hosts: []
+          keyspace: temporal_visibility
+          user: user
+          password: password
+          existingSecret: ''
+          replicationFactor: 1
+          consistency:
+            default:
+              consistency: local_quorum
+              serialConsistency: local_serial
+        sql:
+          driver: mysql
+          host: mysql
+          port: 3306
+          database: temporal_visibility
+          user: temporal
+          password: temporal
+          existingSecret: ''
+          secretName: ''
+          maxConns: 20
+          maxConnLifetime: 1h
+  frontend:
+    service:
+      annotations: {}
+      type: ClusterIP
+      port: 7233
+    metrics:
+      annotations:
+        enabled: true
+      serviceMonitor: {}
+      prometheus: {}
+    podAnnotations: {}
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+  history:
+    service:
+      port: 7234
+    metrics:
+      annotations:
+        enabled: true
+      serviceMonitor: {}
+      prometheus: {}
+    podAnnotations: {}
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+  matching:
+    service:
+      port: 7235
+    metrics:
+      annotations:
+        enabled: false
+      serviceMonitor: {}
+      prometheus: {}
+    podAnnotations: {}
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+  worker:
+    service:
+      port: 7239
+    metrics:
+      annotations:
+        enabled: true
+      serviceMonitor: {}
+      prometheus: {}
+    podAnnotations: {}
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+admintools:
+  enabled: true
+  image:
+    repository: temporalio/admin-tools
+    tag: 1.15.1
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 22
+    annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+web:
+  enabled: true
+  config:
+    auth:
+      enabled: false
+    routing:
+      default_to_namespace: null
+      issue_report_link: 'https://github.com/temporalio/web/issues/new/choose'
+  replicaCount: 1
+  image:
+    repository: temporalio/web
+    tag: 1.14.0
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8088
+    annotations: {}
+  ingress:
+    enabled: false
+    annotations: {}
+    hosts:
+      - /
+    tls: []
+  podAnnotations: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+schema:
+  setup:
+    enabled: false
+    backoffLimit: 100
+  update:
+    enabled: false
+    backoffLimit: 100
+elasticsearch:
+  enabled: true
+  replicas: 3
+  persistence:
+    enabled: false
+  imageTag: 7.16.2
+  host: elasticsearch-master-headless
+  scheme: http
+  port: 9200
+  version: v7
+  logLevel: error
+  username: ''
+  password: ''
+  visibilityIndex: temporal_visibility_v1_dev
+prometheus:
+  enabled: false
+  nodeExporter:
+    enabled: false
+grafana:
+  enabled: false
+  replicas: 1
+  testFramework:
+    enabled: false
+  rbac:
+    create: false
+    pspEnabled: false
+    namespaced: true
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: default
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: TemporalMetrics
+          type: prometheus
+          url: 'http://{{ .Release.Name }}-prometheus-server'
+          access: proxy
+          isDefault: true
+  dashboards:
+    default:
+      frontend-github:
+        url: >-
+          https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/frontend.json
+        datasource: TemporalMetrics
+      temporal-github:
+        url: >-
+          https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/temporal.json
+        datasource: TemporalMetrics
+      history-github:
+        url: >-
+          https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/history.json
+        datasource: TemporalMetrics
+      matching-github:
+        url: >-
+          https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/matching.json
+        datasource: TemporalMetrics
+      clusteroverview-github:
+        url: >-
+          https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/10000.json
+        datasource: TemporalMetrics
+      common-github:
+        url: >-
+          https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/common.json
+        datasource: TemporalMetrics
+cassandra:
+  enabled: false
+  persistence:
+    enabled: false
+  image:
+    repo: cassandra
+    tag: 3.11.3
+    pullPolicy: IfNotPresent
+  config:
+    cluster_size: 3
+    ports:
+      cql: 9042
+    num_tokens: 4
+    max_heap_size: 512M
+    heap_new_size: 128M
+    seed_size: 0
+  service:
+    type: ClusterIP
+mysql:
+  enabled: true
