@@ -31,8 +31,8 @@ public class JarKubernetesApplicationSubmitDemo {
         KubernetesClusterDescriptor clusterDescriptor = createClusterDescriptor(factory, config);
 
         ClusterSpecification clusterSpecification = Util.createClusterSpecification();
-        config.setLong(JobManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(4096).getBytes());
-        config.setLong(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(4096).getBytes());
+        config.setLong(JobManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(1024).getBytes());
+        config.setLong(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(), MemorySize.ofMebiBytes(1024).getBytes());
 
         ConfigUtils.encodeCollectionToConfig(config, PipelineOptions.JARS, Collections.singletonList(new File(Util.LOCAL_JAR_FILE_PATH)), Object::toString);
         config.setString(KubernetesConfigOptions.CONTAINER_IMAGE, imageName);
