@@ -1,11 +1,14 @@
 package cn.sliew.flink.demo.submit;
 
 import org.apache.flink.api.common.JobID;
-import org.apache.flink.client.deployment.executors.RemoteExecutor;
+import org.apache.flink.client.deployment.executors.LocalExecutor;
 import org.apache.flink.client.program.MiniClusterClient;
 import org.apache.flink.client.program.PackagedProgram;
 import org.apache.flink.client.program.PackagedProgramUtils;
-import org.apache.flink.configuration.*;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.configuration.DeploymentOptions;
+import org.apache.flink.configuration.JobManagerOptions;
+import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.runtime.minicluster.MiniCluster;
 import org.apache.flink.runtime.minicluster.MiniClusterConfiguration;
@@ -53,7 +56,7 @@ public class JarMiniClusterSubmitDemo {
         config.setInteger(JobManagerOptions.PORT, address.getPort());
         config.setString(RestOptions.ADDRESS, address.getHost());
         config.setInteger(RestOptions.PORT, address.getPort());
-        config.setString(DeploymentOptions.TARGET, RemoteExecutor.NAME);
+        config.setString(DeploymentOptions.TARGET, LocalExecutor.NAME);
 
         return new MiniClusterClient(config, cluster);
     }
