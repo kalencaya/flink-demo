@@ -13,6 +13,7 @@ services:
     volumes:
       - jobmanager:/flink/jobmanager
       - ./usrlib:/opt/flink/usrlib
+      - /Users/wangqi/Documents/software/flink/flink-1.13.6/lib:/opt/flink/lib
     networks:
       - flink
   taskmanager:
@@ -28,6 +29,7 @@ services:
     volumes:
       - taskmanager:/flink/taskmanager
       - ./usrlib:/opt/flink/usrlib
+      - /Users/wangqi/Documents/software/flink/flink-1.13.6/lib:/opt/flink/lib
     networks:
       - flink
 
