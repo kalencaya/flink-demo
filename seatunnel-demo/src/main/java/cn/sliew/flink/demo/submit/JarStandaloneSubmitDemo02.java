@@ -5,16 +5,6 @@ import cn.sliew.flink.demo.submit.protocol.JarRunResponse;
 import cn.sliew.flink.demo.submit.protocol.JarUploadResponse;
 import cn.sliew.milky.common.util.JacksonUtil;
 import org.apache.flink.api.common.JobID;
-import org.apache.flink.client.deployment.ClusterClientFactory;
-import org.apache.flink.client.deployment.DefaultClusterClientServiceLoader;
-import org.apache.flink.client.deployment.StandaloneClusterDescriptor;
-import org.apache.flink.client.deployment.StandaloneClusterId;
-import org.apache.flink.client.deployment.executors.RemoteExecutor;
-import org.apache.flink.client.program.ClusterClient;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.DeploymentOptions;
-import org.apache.flink.configuration.JobManagerOptions;
-import org.apache.flink.configuration.RestOptions;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ContentType;
@@ -28,14 +18,7 @@ import java.nio.charset.StandardCharsets;
 public class JarStandaloneSubmitDemo02 {
 
     public static void main(String[] args) throws Exception {
-        Configuration config = new Configuration();
-        ClusterClientFactory<StandaloneClusterId> factory = newClientFactory(config);
-        StandaloneClusterId clusterId = factory.getClusterId(config);
-        StandaloneClusterDescriptor clusterDescriptor = (StandaloneClusterDescriptor) factory.createClusterDescriptor(config);
-
-        ClusterClient<StandaloneClusterId> client = clusterDescriptor.retrieve(clusterId).getClusterClient();
-        String webInterfaceURL = client.getWebInterfaceURL();
-
+        String webInterfaceURL = "http://localhost:8081";
         String jarFilePath = "/Users/wangqi/Documents/software/flink/flink-1.13.6/examples/streaming/SocketWindowWordCount.jar";
         JarUploadResponse jarUploadResponse = uploadJar(webInterfaceURL, new File(jarFilePath));
         String jarId = jarUploadResponse.getFilename().substring(jarUploadResponse.getFilename().lastIndexOf("/") + 1);
@@ -67,25 +50,5 @@ public class JarStandaloneSubmitDemo02 {
                 .execute().returnContent().asString(StandardCharsets.UTF_8);
         String jobID = JacksonUtil.parseJsonString(response, JarRunResponse.class).getJobID();
         return JobID.fromHexString(jobID);
-    }
-
-    /**
-     * Standalone 模式下可以使用 jobmanager 的地址或者使用 rest 地址。
-     * 对于 yarn session 和 native kubernetes session 模式下，jobmanager 的地址由 yarn 或 native kubernetes 下处理，
-     * 推荐使用 rest 地址。
-     * todo jobmanager 地址 和 webInterfaceUrl 的优先级问题？
-     */
-    private static ClusterClientFactory<StandaloneClusterId> newClientFactory(Configuration config) {
-        // jobmanager 地址
-        config.setString(JobManagerOptions.ADDRESS, "localhost");
-        config.setInteger(JobManagerOptions.PORT, 111);
-
-        // webInterfaceUrl 地址
-//        config.setString(RestOptions.ADDRESS, "127.0.0.1");
-//        config.setInteger(RestOptions.PORT, 8081);
-        config.setString(DeploymentOptions.TARGET, RemoteExecutor.NAME);
-
-        DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
-        return serviceLoader.getClusterClientFactory(config);
     }
 }

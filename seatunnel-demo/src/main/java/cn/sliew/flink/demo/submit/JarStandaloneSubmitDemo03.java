@@ -37,6 +37,12 @@ public class JarStandaloneSubmitDemo03 {
         System.out.println(jobId);
     }
 
+    /**
+     * Standalone 模式下可以使用 jobmanager 的地址或者使用 rest 地址。
+     * 对于 yarn session 和 native kubernetes session 模式下，jobmanager 的地址由 yarn 或 native kubernetes 下处理，
+     * 推荐使用 rest 地址。
+     * todo jobmanager 地址 和 webInterfaceUrl 的优先级问题？
+     */
     private static ClusterClientFactory<StandaloneClusterId> newClientFactory(Configuration config) {
         config.setString(JobManagerOptions.ADDRESS, "localhost");
         config.setInteger(JobManagerOptions.PORT, 6123);
