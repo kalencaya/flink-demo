@@ -11,7 +11,7 @@ services:
       - 8081:8081
     command: jobmanager
     volumes:
-      - jobmanager:/flink/jobmanager
+#      - jobmanager:/flink/jobmanager
       - ./usrlib:/opt/flink/usrlib
       - /Users/wangqi/Documents/software/flink/flink-1.13.6/lib:/opt/flink/lib
     networks:
@@ -27,7 +27,7 @@ services:
     command: taskmanager
     scale: 1
     volumes:
-      - taskmanager:/flink/taskmanager
+#      - taskmanager:/flink/taskmanager
       - ./usrlib:/opt/flink/usrlib
       - /Users/wangqi/Documents/software/flink/flink-1.13.6/lib:/opt/flink/lib
     networks:
@@ -37,6 +37,6 @@ networks:
   flink:
     driver: bridge
 
-volumes:
-  jobmanager:
-  taskmanager:
+#volumes:
+#  jobmanager:
+#  taskmanager:
