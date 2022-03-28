@@ -12,6 +12,8 @@ services:
     command: jobmanager
     volumes:
       - jobmanager:/flink/jobmanager
+      - ./seatunnel-connector-flink-jdbc-2.0.5-SNAPSHOT.jar:/opt/flink/usrlib/seatunnel-connector-flink-jdbc-2.0.5-SNAPSHOT.jar
+      - ./seatunnel-connector-flink-file-2.0.5-SNAPSHOT.jar:/opt/flink/usrlib/seatunnel-connector-flink-file-2.0.5-SNAPSHOT.jar
     networks:
       - flink
   taskmanager:
@@ -26,6 +28,8 @@ services:
     scale: 1
     volumes:
       - taskmanager:/flink/taskmanager
+      - ./seatunnel-connector-flink-jdbc-2.0.5-SNAPSHOT.jar:/opt/flink/usrlib/seatunnel-connector-flink-jdbc-2.0.5-SNAPSHOT.jar
+      - ./seatunnel-connector-flink-file-2.0.5-SNAPSHOT.jar:/opt/flink/usrlib/seatunnel-connector-flink-file-2.0.5-SNAPSHOT.jar
     networks:
       - flink
 
