@@ -5,16 +5,14 @@ import org.apache.flink.client.deployment.executors.LocalExecutor;
 import org.apache.flink.client.program.MiniClusterClient;
 import org.apache.flink.client.program.PackagedProgram;
 import org.apache.flink.client.program.PackagedProgramUtils;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.DeploymentOptions;
-import org.apache.flink.configuration.JobManagerOptions;
-import org.apache.flink.configuration.RestOptions;
+import org.apache.flink.configuration.*;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.runtime.minicluster.MiniCluster;
 import org.apache.flink.runtime.minicluster.MiniClusterConfiguration;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class JarMiniClusterSubmitDemo {
@@ -38,9 +36,10 @@ public class JarMiniClusterSubmitDemo {
     }
 
     private static MiniCluster newCluster(Configuration config) throws Exception {
-//        config.setInteger(JobManagerOptions.PORT, JobManagerOptions.PORT.defaultValue());
-//        config.setInteger(ConfigConstants.LOCAL_NUMBER_TASK_MANAGER, ConfigConstants.DEFAULT_LOCAL_NUMBER_TASK_MANAGER);
-//        config.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, TaskManagerOptions.NUM_TASK_SLOTS.defaultValue());
+        config.setInteger(JobManagerOptions.PORT, JobManagerOptions.PORT.defaultValue());
+        config.setInteger(ConfigConstants.LOCAL_NUMBER_TASK_MANAGER, ConfigConstants.DEFAULT_LOCAL_NUMBER_TASK_MANAGER);
+        config.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, TaskManagerOptions.NUM_TASK_SLOTS.defaultValue());
+//        config.set(DeploymentOptions.JOB_LISTENERS, Arrays.asList("cn.sliew.flink.demo.submit.listener.DemoJobListener"));
         MiniClusterConfiguration miniClusterConfig = new MiniClusterConfiguration.Builder()
                 .setConfiguration(config)
                 .build();

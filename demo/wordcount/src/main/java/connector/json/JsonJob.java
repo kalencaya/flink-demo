@@ -13,7 +13,7 @@ public class JsonJob {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
         DataStreamSource<User> source = env.fromElements(new User(), new User());
-        source.write
+//        source.write
 
     }
 }
