@@ -17,8 +17,6 @@ services:
         soft: -1
         hard: -1
     restart: unless-stopped
-    volumes:
-      - data01:/usr/share/elasticsearch/data
     networks:
       - elastic
   es02:
@@ -36,8 +34,6 @@ services:
         soft: -1
         hard: -1
     restart: unless-stopped
-    volumes:
-      - data02:/usr/share/elasticsearch/data
     networks:
       - elastic
   es03:
@@ -55,8 +51,6 @@ services:
         soft: -1
         hard: -1
     restart: unless-stopped
-    volumes:
-      - data03:/usr/share/elasticsearch/data
     networks:
       - elastic
   kibana:
@@ -65,18 +59,14 @@ services:
       - ELASTICSEARCH_HOSTS=["http://es01:9200"]
     depends_on:
       - es01
+      - es02
+      - es03
     restart: unless-stopped
     ports:
       - 5601:5601
+    networks:
+      - elastic
 
 networks:
   elastic:
     driver: bridge
-
-volumes:
-  data01:
-    driver: local
-  data02:
-    driver: local
-  data03:
-    driver: local
