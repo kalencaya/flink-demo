@@ -14,12 +14,14 @@ services:
     volumes:
       - ./mysql/mysqld.cnf:/opt/bitnami/mysql/conf/my_custom.cnf
       - ./mysql/init.d:/docker-entrypoint-initdb.d
+    networks:
+      - maxkey
 
   maxkey-frontend:
     image: maxkeytop/maxkey-frontend:3.5.1
     container_name: maxkey-frontend
     environment:
-      - TZ:Asia/Shanghai
+      - TZ=Asia/Shanghai
     ports:
       - 8527:8527
 
@@ -27,33 +29,38 @@ services:
     image: maxkeytop/maxkey:3.5.1
     container_name: maxkey
     environment:
-      - TZ:Asia/Shanghai
-      - DATABASE_HOST:localhost
-      - DATABASE_PORT:3306
-      - DATABASE_NAME:maxkey
-      - DATABASE_USER:root
-      - DATABASE_PWD:maxkey
+      - TZ=Asia/Shanghai
+      - LOGIN_CAPTCHA=true
+      - DATABASE_HOST=mysql
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=maxkey
+      - DATABASE_USER=root
+      - DATABASE_PWD=maxkey
     ports:
       - 9527:9527
+    networks:
+      - maxkey
 
   maxkey-mgt:
     image: maxkeytop/maxkey-mgt:3.5.1
     container_name: maxkey-mgt
     environment:
-      - TZ:Asia/Shanghai
-      - DATABASE_HOST:localhost
-      - DATABASE_PORT:3306
-      - DATABASE_NAME:maxkey
-      - DATABASE_USER:root
-      - DATABASE_PWD:maxkey
+      - TZ=Asia/Shanghai
+      - DATABASE_HOST=mysql
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=maxkey
+      - DATABASE_USER=root
+      - DATABASE_PWD=maxkey
     ports:
       - 9526:9526
+    networks:
+      - maxkey
 
   maxkey-mgt-frontend:
     image: maxkeytop/maxkey-mgt-frontend:3.5.1
     container_name: maxkey-mgt-frontend
     environment:
-      - TZ:Asia/Shanghai
+      - TZ=Asia/Shanghai
     ports:
       - 8526:8526
       
@@ -63,3 +70,8 @@ services:
     build: ./docker-nginx
     ports:
       - 80:80
+
+
+networks:
+  maxkey:
+    driver: bridge
