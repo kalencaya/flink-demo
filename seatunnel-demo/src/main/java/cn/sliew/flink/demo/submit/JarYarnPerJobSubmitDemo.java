@@ -44,9 +44,10 @@ public class JarYarnPerJobSubmitDemo {
      * @see HadoopUtils#getHadoopConfiguration(Configuration)
      */
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
-//        config.setString(JobManagerOptions.ADDRESS, "localhost");
-//        config.setString(CoreOptions.FLINK_YARN_CONF_DIR, HADOOP_CONF_DIR);
-//        config.setString(CoreOptions.FLINK_HADOOP_CONF_DIR, HADOOP_CONF_DIR);
+        // 如果使用 docker 启动 hadoop，需要添加如下配置。
+//        config.setString("flink.hadoop.fs.defaultFS", "hdfs://namenode:9000");
+//        config.setBoolean("flink.hadoop.dfs.client.use.datanode.hostname", true);
+//        config.setBoolean("flink.hadoop.dfs.datanode.use.datanode.hostname", true);
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
