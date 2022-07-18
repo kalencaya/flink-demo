@@ -13,9 +13,11 @@ import org.apache.flink.runtime.util.HadoopUtils;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 
 import java.net.MalformedURLException;
+import java.util.Map;
 
 @Slf4j
 public class JarYarnPerJobSubmitDemo {
@@ -45,9 +47,12 @@ public class JarYarnPerJobSubmitDemo {
      */
     private static ClusterClientFactory<ApplicationId> newClientFactory(Configuration config) {
         // 如果使用 docker 启动 hadoop，需要添加如下配置。
-//        config.setString("flink.hadoop.fs.defaultFS", "hdfs://namenode:9000");
+//        config.setString("flink.hadoop.fs.defaultFS", "hdfs://namenode:9002");
 //        config.setBoolean("flink.hadoop.dfs.client.use.datanode.hostname", true);
 //        config.setBoolean("flink.hadoop.dfs.datanode.use.datanode.hostname", true);
+        // 在配置文件中，已经根据 docker 启动的 hadoop cluster，将上面 3 个配置加入进去
+        // 可以通过 ConfigConstants.PATH_HADOOP_CONFIG，动态调整 hadoop 配置地址
+        config.setString(ConfigConstants.PATH_HADOOP_CONFIG, "/Users/wangqi/Documents/repository/sliew/scaleph/tools/docker/hadoop/etc");
         config.setString(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName());
 
         DefaultClusterClientServiceLoader serviceLoader = new DefaultClusterClientServiceLoader();
