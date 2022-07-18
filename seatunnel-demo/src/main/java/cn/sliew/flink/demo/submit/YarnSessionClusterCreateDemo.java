@@ -19,6 +19,7 @@ public class YarnSessionClusterCreateDemo {
 
     public static void main(String[] args) throws Exception {
         Configuration config = new Configuration();
+        config.setString(ConfigConstants.PATH_HADOOP_CONFIG, "/Users/wangqi/Documents/repository/sliew/scaleph/tools/docker/hadoop/etc");
         ClusterClientFactory<ApplicationId> factory = newClientFactory(config);
         YarnClusterDescriptor clusterDescriptor = (YarnClusterDescriptor) factory.createClusterDescriptor(config);
         Util.addJarFiles(clusterDescriptor, config);
