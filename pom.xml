@@ -17,6 +17,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
+        <hadoop.version>3.2.1</hadoop.version>
         <milky.version>1.0.5-SNAPSHOT</milky.version>
     </properties>
 
@@ -26,6 +27,7 @@
         <module>demo</module>
         <module>seatunnel-demo</module>
         <module>demo/wikiedits</module>
+        <module>hadoop-demo</module>
     </modules>
 
     <repositories>
