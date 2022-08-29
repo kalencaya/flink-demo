@@ -19,26 +19,35 @@ import java.util.List;
 
 public class JarStandaloneSubmitDemo04 {
 
+    private static String SEATUNNEL_HOME = "/Users/wangqi/Documents/software/seatunnel/apache-seatunnel-incubating-2.1.3-SNAPSHOT/";
+
+    private static String CORE = SEATUNNEL_HOME + "lib/seatunnel-flink-starter.jar";
+    private static String FAKE_CONNECTOR = SEATUNNEL_HOME + "connectors/seatunnel/connector-fake-2.1.3-SNAPSHOT.jar";
+    private static String CONSOLE_CONNECTOR = SEATUNNEL_HOME + "connectors/seatunnel/connector-console-2.1.3-SNAPSHOT.jar";
+    private static String JDBC_CONNECTOR = SEATUNNEL_HOME + "connectors/seatunnel/connector-jdbc-2.1.3-SNAPSHOT.jar";
+    private static String CONF_FILE = SEATUNNEL_HOME + "config/fake_to_console.conf";
+
     public static void main(String[] args) throws Exception {
-        URL jdbc = new URL("file:///Library/Maven/repository/org/apache/seatunnel/seatunnel-connector-flink-jdbc/2.0.5-SNAPSHOT/seatunnel-connector-flink-jdbc-2.0.5-SNAPSHOT.jar");
-        URL file = new URL("file:///Library/Maven/repository/org/apache/seatunnel/seatunnel-connector-flink-file/2.0.5-SNAPSHOT/seatunnel-connector-flink-file-2.0.5-SNAPSHOT.jar");
-        List<URL> jobJars = Arrays.asList(jdbc, file);
-        String jarFilePath = "/Users/wangqi/Documents/github/seatunnel/seatunnel-dist/target/apache-seatunnel-incubating-2.0.5-SNAPSHOT/lib/seatunnel-core-flink.jar";
+        new File(FAKE_CONNECTOR).toURL();
+        URL fake = new File(FAKE_CONNECTOR).toURL();
+        URL jdbc = new File(JDBC_CONNECTOR).toURL();
+        URL console = new File(CONSOLE_CONNECTOR).toURL();
+        List<URL> jobJars = Arrays.asList(fake, console);
         PackagedProgram program = PackagedProgram.newBuilder()
-                .setJarFile(new File(jarFilePath))
-                .setArguments("--config", "/Users/wangqi/Documents/github/seatunnel/seatunnel-dist/target/apache-seatunnel-incubating-2.0.5-SNAPSHOT/config/flink.batch.conf")
-                .setEntryPointClassName("org.apache.seatunnel.SeatunnelFlink")
+                .setJarFile(new File(CORE))
+                .setArguments("--config", CONF_FILE)
+                .setEntryPointClassName("org.apache.seatunnel.core.starter.flink.SeatunnelFlink")
                 .setUserClassPaths(jobJars)
                 .build();
 
         Configuration config = new Configuration();
-//        ConfigUtils.encodeCollectionToConfig(config, PipelineOptions.JARS, jobJars, Object::toString);
+        ConfigUtils.encodeCollectionToConfig(config, PipelineOptions.JARS, jobJars, Object::toString);
         ClusterClientFactory<StandaloneClusterId> factory = newClientFactory(config);
         StandaloneClusterId clusterId = factory.getClusterId(config);
         StandaloneClusterDescriptor clusterDescriptor = (StandaloneClusterDescriptor) factory.createClusterDescriptor(config);
         ClusterClient<StandaloneClusterId> client = clusterDescriptor.retrieve(clusterId).getClusterClient();
 
-        JobGraph jobGraph = PackagedProgramUtils.createJobGraph(program, config, 1, false);
+        JobGraph jobGraph = PackagedProgramUtils.createJobGraph(program, config, 1, true);
         JobID jobId = client.submitJob(jobGraph).get();
         System.out.println(jobId);
     }
