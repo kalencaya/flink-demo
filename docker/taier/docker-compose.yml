@@ -24,3 +24,5 @@ services:
       DB_ROOT: root
       DB_PASSWORD: 123456
       DATASOURCEX_PATH: /usr/taier/datasourcex
+    volumes:
+      - /Users/wangqi/Documents/software/DatasourceX/pluginLibs:/usr/taier/datasourcex
