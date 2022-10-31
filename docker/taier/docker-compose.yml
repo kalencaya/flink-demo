@@ -5,6 +5,8 @@ services:
     environment:
       MYSQL_DATABASE: taier
       MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - 3306:3306
   taier-zk:
     image: zookeeper:3.4.9
   taier-ui:
