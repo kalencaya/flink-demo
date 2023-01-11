@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+
+  mysql:
+    image: bitnami/mysql:8.0
+    container_name: mysql
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_AUTHENTICATION_PLUGIN=mysql_native_password
+      - MYSQL_DATABASE=data_service
+    ports:
+      - 3306:3306
+    volumes:
+      - ../mysql/my_custom.cnf:/opt/bitnami/mysql/conf/my_custom.cnf
+      - ../mysql/init.d:/docker-entrypoint-initdb.d
+    networks:
+      - demo
+
+  redis:
+    image: bitnami/redis:6.0
+    container_name: redis
+    environment:
+      - REDIS_PORT_NUMBER=6379
+      - REDIS_PASSWORD=123456
+    ports:
+      - 6379:6379
+    networks:
+      - demo
+
+  minio:
+    image: bitnami/minio:2022.8.8
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - MINIO_DEFAULT_BUCKETS=scaleph
+    ports:
+      - 9000:9000
+      - 9001:9001
+    networks:
+      - demo
+
+networks:
+  demo:
+    driver: bridge
