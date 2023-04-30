@@ -23,10 +23,10 @@ services:
     container_name: mysql
     environment:
       - TZ=Asia/Shanghai
-      - MYSQL_ROOT_USER=dinky
-      - MYSQL_ROOT_PASSWORD=dinky
+      - MYSQL_ROOT_USER=dlink
+      - MYSQL_ROOT_PASSWORD=dlink
       - MYSQL_AUTHENTICATION_PLUGIN=mysql_native_password
-      - MYSQL_DATABASE=dinky
+      - MYSQL_DATABASE=dlink
     ports:
       - 3306:3306
     volumes:
