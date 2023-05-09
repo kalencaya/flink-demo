@@ -21,6 +21,8 @@ services:
   chat2db:
     image: chat2db/chat2db:latest
     container_name: chat2db
+    ports:
+      - 10824:10824
     networks:
       - chat2db
 
