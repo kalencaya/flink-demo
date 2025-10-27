@@ -25,7 +25,6 @@
         <module>canal-kafka</module>
         <module>canal-demo</module>
         <module>demo</module>
-        <module>seatunnel-demo</module>
         <module>demo/wikiedits</module>
         <module>hadoop-demo</module>
     </modules>
