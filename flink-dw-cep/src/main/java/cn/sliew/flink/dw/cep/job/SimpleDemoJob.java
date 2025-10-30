@@ -3,21 +3,20 @@ package cn.sliew.flink.dw.cep.job;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.dynamic.condition.AviatorCondition;
 import org.apache.flink.cep.functions.PatternProcessFunction;
 import org.apache.flink.cep.nfa.aftermatch.AfterMatchSkipStrategy;
 import org.apache.flink.cep.pattern.Pattern;
-import org.apache.flink.configuration.CheckpointingOptions;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.StateBackendOptions;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,20 +24,18 @@ public class SimpleDemoJob {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        Configuration config = new Configuration();
-        config.set(StateBackendOptions.STATE_BACKEND, "rocksdb");
-        config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "filesystem");
-
-        env.configure(config);
+//        Configuration config = new Configuration();
+//        config.set(StateBackendOptions.STATE_BACKEND, "rocksdb");
+//        config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "job");
+//        env.configure(config);
 
         // 读取参数
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
         env.getConfig().setGlobalJobParameters(parameterTool);
         env.setParallelism(1);
 
-
-        DataStreamSource<Event> source = getSource(env);
-        Pattern<Event, Event> pattern = Pattern.<Event>begin("start", AfterMatchSkipStrategy.skipPastLastEvent())
+        SingleOutputStreamOperator<Event> source = getSource(env);
+        Pattern<Event, Event> pattern = Pattern.<Event>begin("start", AfterMatchSkipStrategy.noSkip())
                 .where(new AviatorCondition<>("action == 0"))
                 .followedBy("end")
                 .where(new AviatorCondition<>("action != 1"));
@@ -47,9 +44,9 @@ public class SimpleDemoJob {
             @Override
             public void processMatch(Map<String, List<Event>> match, Context context, Collector<String> out) throws Exception {
                 StringBuilder sb = new StringBuilder();
-                sb.append("A match for Pattern  is found. The event sequence: ");
+                sb.append("A match for Pattern is found. The event sequence: ");
                 for (Map.Entry<String, List<Event>> entry : match.entrySet()) {
-                    sb.append(entry.getKey()).append(": ").append(entry.getValue());
+                    sb.append(entry.getKey()).append(": ").append(entry.getValue()).append(", ");
                 }
                 out.collect(sb.toString());
             }
@@ -60,26 +57,37 @@ public class SimpleDemoJob {
         env.execute();
     }
 
-    private static DataStreamSource<Event> getSource(StreamExecutionEnvironment env) {
+    private static SingleOutputStreamOperator<Event> getSource(StreamExecutionEnvironment env) {
+        // 必须设置 watermark
         return env.fromCollection(
-                Arrays.asList(
-                        new Event("ken", 1, 1, 0, 1662022777000L),
-                        new Event("ken", 2, 1, 0, 1662022778000L),
-                        new Event("ken", 3, 1, 1, 1662022779000L),
-                        new Event("ken", 4, 1, 2, 1662022780000L),
-                        new Event("ken", 5, 1, 1, 1662022780000L)
+                        Arrays.asList(
+                                new Event(1, 1, "ken", 0, 1662022777000L),
+                                new Event(2, 1, "ken", 0, 1662022778000L),
+                                new Event(3, 1, "ken", 1, 1662022779000L),
+                                new Event(4, 1, "ken", 2, 1662022780000L),
+                                new Event(5, 1, "ken", 1, 1662022780000L)
+                        )
                 )
-        );
+                .assignTimestampsAndWatermarks(WatermarkStrategy.
+                        <Event>forMonotonousTimestamps().withTimestampAssigner((event, ts) -> event.getTimestamp()));
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Event {
-        private String name;
         private int id;
-        private int productionId;
+        private int userId;
+        private String name;
         private int action;
         private long timestamp;
+
+        @Override
+        public String toString() {
+            return "Event{" +
+                    "id=" + id +
+                    ", timestamp=" + DateFormatUtils.format(new Date(timestamp), "yyyy-MM-dd HH:mm:ss") +
+                    '}';
+        }
     }
 }
