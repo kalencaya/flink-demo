@@ -1,6 +1,0 @@
-hello flink
-hello people
-hello world
-allow
-aloud
-cloud
