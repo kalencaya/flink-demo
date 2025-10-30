@@ -43,6 +43,7 @@ public enum ConverterUtil {
         String name = dto.getKey();
         ConditionSpec conditionSpec = null;
         RuleDTO ruleDTO = dto.getRule();
+        org.apache.commons.collections.CollectionUtils
         if (CollectionUtils.isEmpty(ruleDTO.getExpressions())) {
             conditionSpec = DumyCondition.getInstance();
         } else {

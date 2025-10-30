@@ -16,8 +16,8 @@
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
 
         <flink.version>1.17.2</flink.version>
-        <!--        <flink.scope>provided</flink.scope>-->
-        <flink.scope>compile</flink.scope>
+        <flink.scope>provided</flink.scope>
+<!--        <flink.scope>compile</flink.scope>-->
         <paimon.version>1.1.1</paimon.version>
         <kafka.version>3.4.0</kafka.version>
         <hikaricp.version>3.4.5</hikaricp.version>

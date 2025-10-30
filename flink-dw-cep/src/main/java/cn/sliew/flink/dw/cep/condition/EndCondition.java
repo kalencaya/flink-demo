@@ -6,7 +6,7 @@ import org.apache.flink.cep.pattern.conditions.SimpleCondition;
 public class EndCondition extends SimpleCondition<Event> {
 
     @Override
-    public boolean filter(Event value) throws Exception {
+    public boolean filter(Event value, Context<Event> ctx) throws Exception {
         return value.getAction() != 1;
     }
 }

@@ -10,7 +10,7 @@ public class DumyCondition extends SimpleCondition<Event> {
     private static final ConditionSpec INSTANCE = new ClassConditionSpec(DumyCondition.class.getCanonicalName());
 
     @Override
-    public boolean filter(Event event) throws Exception {
+    public boolean filter(Event event, Context<Event> ctx) throws Exception {
         return false;
     }
 
