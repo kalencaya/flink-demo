@@ -9,6 +9,9 @@ import org.apache.flink.cep.dynamic.condition.AviatorCondition;
 import org.apache.flink.cep.functions.PatternProcessFunction;
 import org.apache.flink.cep.nfa.aftermatch.AfterMatchSkipStrategy;
 import org.apache.flink.cep.pattern.Pattern;
+import org.apache.flink.configuration.CheckpointingOptions;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.configuration.StateBackendOptions;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -22,10 +25,17 @@ public class SimpleDemoJob {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        Configuration config = new Configuration();
+        config.set(StateBackendOptions.STATE_BACKEND, "rocksdb");
+        config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "filesystem");
+
+        env.configure(config);
+
         // 读取参数
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
         env.getConfig().setGlobalJobParameters(parameterTool);
         env.setParallelism(1);
+
 
         DataStreamSource<Event> source = getSource(env);
         Pattern<Event, Event> pattern = Pattern.<Event>begin("start", AfterMatchSkipStrategy.skipPastLastEvent())
