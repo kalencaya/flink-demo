@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CombineDTO {
+
     private String direction;
     private String type;
+    private String quantityType;
     private int quantity;
     private String unit;
 }

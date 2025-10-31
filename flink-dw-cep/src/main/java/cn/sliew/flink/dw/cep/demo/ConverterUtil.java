@@ -20,8 +20,6 @@ public enum ConverterUtil {
 
     public static Object toCepJson(PatternDTO dto) {
         // 将层级的操作，变成 dag。这一步其实就是 a -> b -> c
-
-
         Map<String, NodeSpec> cache = new HashMap<>();
         MutableGraph<NodeSpec> dag = GraphBuilder.directed().build();
 
@@ -44,7 +42,7 @@ public enum ConverterUtil {
         ConditionSpec conditionSpec = null;
         RuleDTO ruleDTO = dto.getRule();
         if (CollectionUtils.isEmpty(ruleDTO.getExpressions())) {
-            conditionSpec = DumyCondition.getInstance();
+            conditionSpec = DumyCondition.getSpecInstance();
         } else {
             String expression = ruleDTO.getExpressions().stream()
                     .map(ExpressionDTO::toAviator)
@@ -55,4 +53,5 @@ public enum ConverterUtil {
         // 测试是 n 句，还是 n 秒。n 句需翻译成
         return new NodeSpec(name, null, conditionSpec);
     }
+
 }
