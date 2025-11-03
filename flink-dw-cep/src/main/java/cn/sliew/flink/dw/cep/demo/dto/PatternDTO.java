@@ -10,5 +10,5 @@ public class PatternDTO {
     private int level;
     private CombineDTO combine;
     private RuleDTO rule;
-    private ChildPatternDTO child;
+    private PatternDTO child;
 }

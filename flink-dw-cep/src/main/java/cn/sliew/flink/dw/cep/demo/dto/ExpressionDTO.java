@@ -13,10 +13,14 @@ public class ExpressionDTO {
     private RuleDTO child;
 
     public String toAviator() {
+        return convert();
+    }
+
+    private String convert() {
         // todo 根据 operation 进行拼接
         if (operation.equals("==")) {
             return fieldName + " " + operation + " " + values.get(0);
         }
-        return null;
+        return fieldName + " " + operation + " " + values.get(0);
     }
 }

@@ -23,26 +23,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class NotDemoJob {
+public class MultiPatternDemoJob {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
         // 读取参数
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
         env.getConfig().setGlobalJobParameters(parameterTool);
         env.setParallelism(1);
 
         SingleOutputStreamOperator<Event> source = getSource(env);
-        Pattern<Event, Event> pattern = Pattern.<Event>begin("start", AfterMatchSkipStrategy.skipPastLastEvent())
-                .where(new AviatorCondition<>("!(action == 3 || action == 4)"))
-                .oneOrMore()
-                .notFollowedBy("not")
-                // action == 3 or action == 4
-                .where(new AviatorCondition<>("action == 3 || action == 4"))
-                .next("end")
-                // action == 2
+
+        // fixme 测试过了，实现不了
+        // A -> (B and C)
+        // A (action == 0) -> (B (action == 1 -> action == 2) and C(action == 2 -> action == 3))
+        Pattern<Event, Event> pattern = Pattern.<Event>begin("start", AfterMatchSkipStrategy.noSkip())
+                .where(new AviatorCondition<>("action == 0"))
+                .followedBy("B1")
+                .where(new AviatorCondition<>("action == 1"))
+                .next("B2")
                 .where(new AviatorCondition<>("action == 2"))
-                .within(Time.of(10L, TimeUnit.MINUTES));
+
+                .followedBy("C1")
+                .where(new AviatorCondition<>("action == 2"))
+                .next("C2")
+                .where(new AviatorCondition<>("action == 3"));
 
         System.out.println(CepJsonUtils.convertPatternToJSONString(pattern));
 
@@ -67,19 +73,19 @@ public class NotDemoJob {
         // 必须设置 watermark
         return env.fromCollection(
                         Arrays.asList(
-                                new Event(1, 1, "ken", 0, 1662022777000L),
+                                new Event(1, 1, "ken", 0, 1662022777000L), // A 开始
                                 new Event(2, 1, "ken", 0, 1662022778000L),
-                                new Event(3, 1, "ken", 1, 1662022779000L),
-                                new Event(4, 1, "ken", 2, 1662022780000L), // 应该检测
-                                new Event(5, 1, "ken", 1, 1662022781000L),
+                                new Event(3, 1, "ken", 2, 1662022779000L),
+                                new Event(4, 1, "ken", 2, 1662022780000L), // C 序列
+                                new Event(5, 1, "ken", 3, 1662022781000L),
                                 new Event(6, 1, "ken", 3, 1662022782000L),
-                                new Event(7, 1, "ken", 2, 1662022783000L), // 因为前面有 1 条 action == 3 的消息而没有检测到
+                                new Event(7, 1, "ken", 2, 1662022783000L),
                                 new Event(8, 1, "ken", 0, 1662022784000L),
-                                new Event(9, 1, "ken", 1, 1662022785000L),
-                                new Event(10, 1, "ken", 2, 1662022786000L), // 应该检测
+                                new Event(9, 1, "ken", 1, 1662022785000L), // B 序列
+                                new Event(10, 1, "ken", 2, 1662022786000L),
                                 new Event(11, 1, "ken", 1, 1662022787000L),
                                 new Event(12, 1, "ken", 3, 1662022788000L),
-                                new Event(13, 1, "ken", 2, 1662022789000L) // 不该检测出来
+                                new Event(13, 1, "ken", 2, 1662022789000L)
                         )
                 )
                 .assignTimestampsAndWatermarks(WatermarkStrategy.
