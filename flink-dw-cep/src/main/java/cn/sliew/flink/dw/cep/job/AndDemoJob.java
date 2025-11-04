@@ -1,5 +1,6 @@
 package cn.sliew.flink.dw.cep.job;
 
+import cn.sliew.flink.dw.support.util.ParameterToolUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,13 +28,8 @@ public class AndDemoJob {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        Configuration config = new Configuration();
-//        config.set(StateBackendOptions.STATE_BACKEND, "rocksdb");
-//        config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "job");
-//        env.configure(config);
-
         // 读取参数
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
+        ParameterTool parameterTool = ParameterToolUtil.createParameterTool(args);
         env.getConfig().setGlobalJobParameters(parameterTool);
         env.setParallelism(1);
 

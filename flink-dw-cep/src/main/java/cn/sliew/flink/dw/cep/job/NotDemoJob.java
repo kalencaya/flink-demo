@@ -1,5 +1,6 @@
 package cn.sliew.flink.dw.cep.job;
 
+import cn.sliew.flink.dw.support.util.ParameterToolUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class NotDemoJob {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // 读取参数
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
+        ParameterTool parameterTool = ParameterToolUtil.createParameterTool(args);
         env.getConfig().setGlobalJobParameters(parameterTool);
         env.setParallelism(1);
 
