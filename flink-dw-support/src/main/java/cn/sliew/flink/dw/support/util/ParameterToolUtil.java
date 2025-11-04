@@ -1,5 +1,6 @@
 package cn.sliew.flink.dw.support.util;
 
+import cn.sliew.flink.dw.common.JacksonUtil;
 import cn.sliew.flink.dw.support.config.JdbcConfig;
 import cn.sliew.flink.dw.support.config.RedisConfig;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -25,7 +26,7 @@ public enum ParameterToolUtil {
         String currentEnvFileName = String.format(ENVIRONMENT_FILENAME_TEMPLATE, envActiveValue);
         ParameterTool currentEnvPropertiesFile = ParameterTool.fromPropertiesFile(Thread.currentThread().getContextClassLoader().getResourceAsStream(currentEnvFileName));
         parameterTool = currentEnvPropertiesFile.mergeWith(defaultPropertiesFile).mergeWith(fromArgs).mergeWith(systemProperties);
-        System.out.println("全局配置：" + parameterTool.toMap());
+        System.out.println("全局配置: \n" + JacksonUtil.toJsonString(parameterTool.toMap()));
         return parameterTool;
     }
 
