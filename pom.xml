@@ -22,6 +22,8 @@
         <kafka.version>3.4.0</kafka.version>
         <hikaricp.version>3.4.5</hikaricp.version>
         <mybatis.version>3.5.11</mybatis.version>
+        <mysql.version>8.0.29</mysql.version>
+        <jedis.version>7.0.0</jedis.version>
         <log4j.version>2.24.3</log4j.version>
     </properties>
 
@@ -152,7 +154,13 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.29</version>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

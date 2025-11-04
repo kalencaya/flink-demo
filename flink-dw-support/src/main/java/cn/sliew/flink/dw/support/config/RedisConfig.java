@@ -9,6 +9,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class RedisConfig implements Serializable {
 
+    public static final String DEFAULT_INSTANCE = "default";
+
     private String host;
     private int port;
     private String passwd;
