@@ -18,9 +18,9 @@ import java.util.Objects;
 
 import static org.apache.flink.shaded.guava30.com.google.common.base.Preconditions.checkArgument;
 
-public class DuplicateMessageCondition<T> extends RichIterativeCondition<T> {
+public abstract class DuplicateCheckCondition<T> extends RichIterativeCondition<T> {
 
-    private DuplicateElementChecker<String> checker;
+    private DuplicateElementChecker<String> checker = new DuplicateElementChecker<>();
 
     // 间隔 < 5 分钟，间隔 < 5 句，重复次数 > 3 次。
     private long periodTime;
@@ -30,7 +30,7 @@ public class DuplicateMessageCondition<T> extends RichIterativeCondition<T> {
     private RedisConfig redisConfig;
     private Jedis jedis;
 
-    public DuplicateMessageCondition(long periodTime, int periodCnt, int threshold) {
+    public DuplicateCheckCondition(long periodTime, int periodCnt, int threshold) {
         checkArgument(periodTime > 0L && periodTime < Duration.ofDays(1).toMinutes(), "时间间隔需大于 0 小于 1 天");
         checkArgument(periodCnt > 0L && periodCnt < 1000L, "语句次数需大于 0 小于 1000");
         checkArgument(threshold > 0L && threshold < 100L, "重复次数需大于 0 小于 100");
@@ -70,8 +70,7 @@ public class DuplicateMessageCondition<T> extends RichIterativeCondition<T> {
         List<T> recentEvents = new ArrayList<>(allElements.size());
         for (int i = 0; i < allElements.size(); i++) {
             String element = allElements.get(i);
-            // todo 类型
-            T item = (T) JacksonUtil.parseJsonString(element, Object.class);
+            T item = JacksonUtil.parseJsonString(element, getEventClass());
             recentEvents.add(item);
         }
         // 判断是否是重复消息
@@ -82,17 +81,14 @@ public class DuplicateMessageCondition<T> extends RichIterativeCondition<T> {
         if (CollectionUtils.isEmpty(recentEvents)) {
             return false;
         }
-
-        // todo 抽取具体的检测字段值
-        String[] array = recentEvents.stream().map(event -> event.toString()).toArray(String[]::new);
+        String[] array = recentEvents.stream().map(this::getCheckString).toArray(String[]::new);
         return checker.hasDuplicateInWindow(array, periodCnt, threshold);
     }
 
-    private String getRedisKey(T event) {
-        // 业务主键作为 key，记录在最近的对话中的
-        // todo 以在聊天记录中的客服id 为例：必须是客服，然后是房间id + 客服id 即为主键
-        String key = event.toString();
-        return JedisUtil.DUPLICATE_MESSAGE_KEY + key;
-    }
+    protected abstract Class<T> getEventClass();
+
+    protected abstract String getRedisKey(T event);
+
+    protected abstract String getCheckString(T event);
 
 }

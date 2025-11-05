@@ -1,10 +1,15 @@
 package cn.sliew.flink.dw.cep.condition;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DuplicateElementChecker<T> {
+public class DuplicateElementChecker<T> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 检测数组中是否存在连续windowSize个元素内有minDuplicate个重复元素
