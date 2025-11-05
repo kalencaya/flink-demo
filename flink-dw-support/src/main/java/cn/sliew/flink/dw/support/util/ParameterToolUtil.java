@@ -71,8 +71,9 @@ public enum ParameterToolUtil {
     }
 
     public static KafkaTopicConfig getKafkaTopicConfig(ParameterTool tool, String topicPrefix, String serverPrefix) {
+
         return new KafkaTopicConfig(
-                tool.get(String.format("%s.%s.kafka.servers", topicPrefix, serverPrefix)),
+                tool.get(String.format("%s.kafka.servers", serverPrefix)),
                 tool.get(String.format("%s.%s.kafka.topic", topicPrefix, serverPrefix), null),
                 tool.get(String.format("%s.%s.kafka.topic.gid", topicPrefix, serverPrefix), null),
                 tool.get(String.format("%s.%s.topic.scan.startup.mode", topicPrefix, serverPrefix), null)
