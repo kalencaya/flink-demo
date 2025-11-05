@@ -13,7 +13,12 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public enum MybatisUtil {
@@ -29,7 +34,7 @@ public enum MybatisUtil {
             if (SQL_SESSION_FACTORY != null) {
                 return SQL_SESSION_FACTORY;
             }
-            SQL_SESSION_FACTORY = createSqlSessionFactory(tool, createDataSource(tool, "default"), getMapperXmls());
+            SQL_SESSION_FACTORY = createSqlSessionFactory(tool, createDataSource(tool, "default"), getMapperXmls(tool));
         }
         return SQL_SESSION_FACTORY;
     }
@@ -53,10 +58,31 @@ public enum MybatisUtil {
         return dataSource;
     }
 
-    private static List<String> getMapperXmls() {
-        return Arrays.asList(
-
-        );
+    private static List<String> getMapperXmls(ParameterTool tool) {
+        try {
+            String mapperLocation = tool.get("mybatis.mapper-location");
+            if (!mapperLocation.endsWith("/")) {
+                mapperLocation = mapperLocation + "/";
+            }
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            URL mapperResources = classLoader.getResource(mapperLocation);
+            List<String> mapperXmls = new ArrayList<>();
+            if (mapperResources != null) {
+                Path dataPath = Paths.get(mapperResources.toURI());
+                String mapperPath = mapperLocation;
+                Files.walk(dataPath)
+                        .filter(Files::isRegularFile)
+                        .forEach(filePath -> {
+                            String fileName = filePath.getFileName().toString();
+                            mapperXmls.add(mapperPath + fileName);
+                        });
+            }
+            return mapperXmls;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static SqlSessionFactory createSqlSessionFactory(ParameterTool tool, HikariDataSource dataSource, List<String> mapperXmls) {

@@ -16,7 +16,8 @@ import java.util.List;
 public abstract class PeriodicPatternProcessorDiscovererFactory<T>
         implements PatternProcessorDiscovererFactory<T> {
 
-    @Nullable private final List<PatternProcessor<T>> initialPatternProcessors;
+    @Nullable
+    private final List<PatternProcessor<T>> initialPatternProcessors;
     private final Long intervalMillis;
 
     public PeriodicPatternProcessorDiscovererFactory(

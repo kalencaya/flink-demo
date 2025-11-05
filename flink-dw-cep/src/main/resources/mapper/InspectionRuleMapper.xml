@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.sliew.flink.dw.cep.dao.mapper.InspectionRuleMapper">
+
+    <resultMap id="BaseResultMap" type="cn.sliew.flink.dw.cep.dao.entity.InspectionRuleEntity">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="create_user_id" jdbcType="VARCHAR" property="createUserId"/>
+        <result column="update_user_id" jdbcType="VARCHAR" property="updateUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="BOOLEAN" property="deleted"/>
+    </resultMap>
+
+    <select id="listAll" resultMap="BaseResultMap">
+        select *
+        from insepction_rule
+    </select>
+
+</mapper>
+

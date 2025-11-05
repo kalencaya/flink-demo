@@ -2,18 +2,15 @@ package cn.sliew.flink.dw.cep;
 
 import cn.sliew.flink.dw.cep.condition.EndCondition;
 import cn.sliew.flink.dw.cep.condition.StartCondition;
-import cn.sliew.flink.dw.cep.dynamic.JDBCPeriodicPatternProcessorDiscovererFactory;
 import cn.sliew.flink.dw.cep.source.Event;
 import cn.sliew.flink.dw.cep.source.LoopEventDataGenSource;
+import cn.sliew.flink.dw.support.util.ParameterToolUtil;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.connector.source.util.ratelimit.RateLimiterStrategy;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.cep.CEP;
-import org.apache.flink.cep.TimeBehaviour;
 import org.apache.flink.cep.dynamic.impl.json.util.CepJsonUtils;
 import org.apache.flink.cep.nfa.aftermatch.AfterMatchSkipStrategy;
 import org.apache.flink.cep.pattern.Pattern;
@@ -21,7 +18,6 @@ import org.apache.flink.connector.datagen.source.DataGeneratorSource;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public class CepDemoJob {
@@ -29,7 +25,7 @@ public class CepDemoJob {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // 读取参数
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
+        ParameterTool parameterTool = ParameterToolUtil.createParameterTool(args);
         env.getConfig().setGlobalJobParameters(parameterTool);
         env.setParallelism(1);
 

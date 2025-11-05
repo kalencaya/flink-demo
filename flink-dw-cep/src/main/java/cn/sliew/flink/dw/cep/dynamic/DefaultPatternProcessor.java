@@ -22,7 +22,7 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 public class DefaultPatternProcessor<T> implements PatternProcessor<T> {
 
     /** The ID of the pattern processor. */
-    private final String id;
+    private final Long id;
 
     /** The version of the pattern processor. */
     private final Integer version;
@@ -33,7 +33,7 @@ public class DefaultPatternProcessor<T> implements PatternProcessor<T> {
     private final @Nullable PatternProcessFunction<T, ?> patternProcessFunction;
 
     public DefaultPatternProcessor(
-            final String id,
+            final Long id,
             final Integer version,
             final String pattern,
             final @Nullable PatternProcessFunction<T, ?> patternProcessFunction,
@@ -61,7 +61,7 @@ public class DefaultPatternProcessor<T> implements PatternProcessor<T> {
 
     @Override
     public String getId() {
-        return id;
+        return id.toString();
     }
 
     @Override

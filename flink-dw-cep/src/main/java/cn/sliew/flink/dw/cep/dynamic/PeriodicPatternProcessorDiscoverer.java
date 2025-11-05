@@ -1,5 +1,6 @@
 package cn.sliew.flink.dw.cep.dynamic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.cep.dynamic.processor.PatternProcessor;
 import org.apache.flink.cep.dynamic.processor.PatternProcessorDiscoverer;
 import org.apache.flink.cep.dynamic.processor.PatternProcessorManager;
@@ -15,6 +16,7 @@ import java.util.TimerTask;
  *
  * @param <T> Base type of the elements appearing in the pattern.
  */
+@Slf4j
 public abstract class PeriodicPatternProcessorDiscoverer<T>
         implements PatternProcessorDiscoverer<T> {
 
@@ -60,7 +62,7 @@ public abstract class PeriodicPatternProcessorDiscoverer<T>
                             try {
                                 patternProcessors = getLatestPatternProcessors();
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                log.error(e.getMessage(), e);
                             }
                             patternProcessorManager.onPatternProcessorsUpdated(patternProcessors);
                         }

@@ -92,8 +92,8 @@ public enum ParameterToolUtil {
                 parameterTool.get(String.format("%s.jdbc.user", prefix)),
                 parameterTool.get(String.format("%s.jdbc.password", prefix)),
                 parameterTool.get(String.format("%s.jdbc.driver", prefix)),
-                parameterTool.getInt(String.format("%s.jdbc.flush.max.rows", prefix)),
-                parameterTool.getInt(String.format("%s.jdbc.flush.interval", prefix))
+                parameterTool.getInt(String.format("%s.jdbc.flush.max.rows", prefix), 100),
+                parameterTool.getInt(String.format("%s.jdbc.flush.interval", prefix), 500)
         );
     }
 }
