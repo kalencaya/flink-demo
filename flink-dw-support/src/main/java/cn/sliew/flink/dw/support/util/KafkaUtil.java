@@ -1,5 +1,6 @@
 package cn.sliew.flink.dw.support.util;
 
+import cn.sliew.flink.dw.support.config.KafkaTopicConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -43,19 +44,13 @@ public enum KafkaUtil {
         return OffsetsInitializer.committedOffsets(OffsetResetStrategy.EARLIEST);
     }
 
-    public static KafkaSource<String> getKafkaSource(String groupId, String topicName, ParameterTool parameterTool) {
-        String finalGroupId = formatGroupId(groupId, parameterTool);
-        Properties kafkaProperties = ParameterToolUtil.getKafkaConsumerConfig(finalGroupId);
-        OffsetsInitializer offsetsInitializer = KafkaUtil.getOffset(parameterTool.get("scan.startup.mode"));
+    public static KafkaSource<String> getKafkaSource(ParameterTool parameterTool, String topic, String instance) {
+        KafkaTopicConfig kafkaTopicConfig = ParameterToolUtil.getKafkaTopicConfig(parameterTool, topic, instance);
+        Properties kafkaProperties = ParameterToolUtil.getKafkaConsumerConfig(kafkaTopicConfig);
         return KafkaUtil.<String>getSource(kafkaProperties)
-                .setTopics(topicName)
+                .setTopics(kafkaTopicConfig.getTopic())
                 .setValueOnlyDeserializer(new SimpleStringSchema())
-                .setStartingOffsets(offsetsInitializer)
+                .setStartingOffsets(KafkaUtil.getOffset(kafkaTopicConfig.getScanStartupMode()))
                 .build();
-    }
-
-    public static String formatGroupId(String groupId, ParameterTool parameterTool) {
-//        return String.format("%s_%s", groupId, parameterTool.get("env.active").toUpperCase());
-        return groupId;
     }
 }

@@ -2,6 +2,7 @@ package cn.sliew.flink.dw.support.util;
 
 import cn.sliew.flink.dw.common.JacksonUtil;
 import cn.sliew.flink.dw.support.config.JdbcConfig;
+import cn.sliew.flink.dw.support.config.KafkaTopicConfig;
 import cn.sliew.flink.dw.support.config.RedisConfig;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -47,14 +48,11 @@ public enum ParameterToolUtil {
         return env;
     }
 
-    public static Properties getKafkaConsumerConfig(String groupId) {
-        return getKafkaConsumerConfig(parameterTool.get("kafka.consumer.servers"), groupId);
-    }
-
-    public static Properties getKafkaConsumerConfig(String bootstrapServers, String groupId) {
+    public static Properties getKafkaConsumerConfig(KafkaTopicConfig config) {
         Properties properties = new Properties();
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getServers());
+        String finalGid = String.format("%s_%s", config.getGid(), parameterTool.get("env.active"));
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, finalGid);
         properties.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "5000");
         properties.setProperty(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, "60000");
         properties.setProperty(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, Integer.valueOf(1024 * 1024 * 10).toString());
@@ -62,19 +60,23 @@ public enum ParameterToolUtil {
         return properties;
     }
 
-    public static Properties getKafkaProducerConfig(ParameterTool tool) {
-        String kafkaAddr = tool.get("kafka.producer.servers");
-        return getKafkaProducerConfig(kafkaAddr);
-    }
-
-    private static Properties getKafkaProducerConfig(String kafkaAddr) {
+    private static Properties getKafkaProducerConfig(KafkaTopicConfig config) {
         Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddr);
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getServers());
         properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 30 * 1000);
         properties.put(ProducerConfig.RETRIES_CONFIG, 5);
         properties.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, 3000);
         properties.setProperty(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, "5242880");
         return properties;
+    }
+
+    public static KafkaTopicConfig getKafkaTopicConfig(ParameterTool tool, String topicPrefix, String serverPrefix) {
+        return new KafkaTopicConfig(
+                tool.get(String.format("%s.%s.kafka.servers", topicPrefix, serverPrefix)),
+                tool.get(String.format("%s.%s.kafka.topic", topicPrefix, serverPrefix), null),
+                tool.get(String.format("%s.%s.kafka.topic.gid", topicPrefix, serverPrefix), null),
+                tool.get(String.format("%s.%s.topic.scan.startup.mode", topicPrefix, serverPrefix), null)
+        );
     }
 
     public static RedisConfig getRedisConfig(ParameterTool tool, String prefix) {
