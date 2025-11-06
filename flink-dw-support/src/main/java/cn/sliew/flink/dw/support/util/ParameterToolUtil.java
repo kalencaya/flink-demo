@@ -4,11 +4,19 @@ import cn.sliew.flink.dw.common.JacksonUtil;
 import cn.sliew.flink.dw.support.config.JdbcConfig;
 import cn.sliew.flink.dw.support.config.KafkaTopicConfig;
 import cn.sliew.flink.dw.support.config.RedisConfig;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.config.SslConfigs;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public enum ParameterToolUtil {
@@ -57,6 +65,7 @@ public enum ParameterToolUtil {
         properties.setProperty(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, "60000");
         properties.setProperty(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, Integer.valueOf(1024 * 1024 * 10).toString());
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        configSasl(config, properties);
         return properties;
     }
 
@@ -67,13 +76,56 @@ public enum ParameterToolUtil {
         properties.put(ProducerConfig.RETRIES_CONFIG, 5);
         properties.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, 3000);
         properties.setProperty(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, "5242880");
+        configSasl(config, properties);
         return properties;
     }
 
-    public static KafkaTopicConfig getKafkaTopicConfig(ParameterTool tool, String topicPrefix, String serverPrefix) {
+    private static void configSasl(KafkaTopicConfig config, Properties properties) {
+        if (StringUtils.isNotBlank(config.getJaasConfig())) {
+            // SASL认证配置
+            properties.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
+            properties.put(SaslConfigs.SASL_JAAS_CONFIG, config.getJaasConfig());
+            properties.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
+            properties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
+            try {
+                properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaSslTruststoreLocation(config));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+    private static String kafkaSslTruststoreLocation(KafkaTopicConfig config) throws IOException {
+        // 1. 获取 JAR 包内的资源
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try (InputStream inputStream = classLoader.getResourceAsStream(config.getJksFile())) {
+            // 2. 创建一个临时文件
+            // 文件名和后缀可以自定义，这里使用 truststore 和 .jks
+            File tempTruststoreFile = File.createTempFile("kafka-truststore", ".jks");
+            try (FileOutputStream outputStream = new FileOutputStream(tempTruststoreFile)) {
+                // 3. 将资源流的内容复制到临时文件中
+                IOUtils.copy(inputStream, outputStream);
+            } catch (IOException e) {
+                // 不抛一下会吞异常
+                throw e;
+            }
+            // 4. 确保应用退出时删除临时文件
+            tempTruststoreFile.deleteOnExit();
+            // 5. 返回临时文件的绝对路径
+            return tempTruststoreFile.getAbsolutePath();
+        } catch (IOException e) {
+            // 不抛一下会吞异常
+            throw e;
+        }
+    }
+
+    public static KafkaTopicConfig getKafkaTopicConfig(ParameterTool tool, String topicPrefix, String serverPrefix) {
         return new KafkaTopicConfig(
                 tool.get(String.format("%s.kafka.servers", serverPrefix)),
+                tool.get(String.format("%s.kafka.jaasConfig", serverPrefix), null),
+                tool.get(String.format("%s.kafka.jksFile", serverPrefix), null),
                 tool.get(String.format("%s.%s.kafka.topic", topicPrefix, serverPrefix), null),
                 tool.get(String.format("%s.%s.kafka.topic.gid", topicPrefix, serverPrefix), null),
                 tool.get(String.format("%s.%s.topic.scan.startup.mode", topicPrefix, serverPrefix), null)

@@ -10,6 +10,8 @@ import java.io.Serializable;
 public class KafkaTopicConfig implements Serializable {
 
     private String servers;
+    private String jaasConfig;
+    private String jksFile;
     private String topic;
     private String gid;
     private String scanStartupMode;
