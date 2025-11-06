@@ -8,12 +8,11 @@
         <artifactId>flink-demo</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>flink-dw-support</artifactId>
+    <artifactId>flink-dw-job</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>flink-dw-base</module>
-        <module>flink-dw-cep</module>
+        <module>flink-dw-job-inspection</module>
     </modules>
 
 </project>

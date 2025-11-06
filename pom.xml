@@ -30,7 +30,7 @@
     <modules>
         <module>flink-dw-common</module>
         <module>flink-dw-support</module>
-        <module>flink-dw-cep</module>
+        <module>flink-dw-job</module>
     </modules>
 
     <dependencies>
@@ -55,7 +55,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>flink-dw-support</artifactId>
+                <artifactId>flink-dw-base</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>flink-dw-cep</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
