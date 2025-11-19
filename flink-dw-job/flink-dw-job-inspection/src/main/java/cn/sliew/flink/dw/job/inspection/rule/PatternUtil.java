@@ -72,7 +72,7 @@ public enum PatternUtil {
                     seconds = combineDTO.getQuantity();
                     break;
                 case "minute":
-                    seconds = Duration.ofMinutes(combineDTO.getQuantity()).toSeconds();
+                    seconds = Duration.ofMinutes(combineDTO.getQuantity()).toMinutes() * 60;
                     break;
                 default:
                     throw new RuntimeException("unknown combine unit: " + combineDTO.getUnit());

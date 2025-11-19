@@ -1,6 +1,5 @@
 package cn.sliew.flink.dw.job.inspection.condition;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,7 +7,6 @@ import java.util.Map;
 
 public class DuplicateElementChecker<T> implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

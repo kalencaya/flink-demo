@@ -12,6 +12,7 @@ import org.apache.flink.cep.pattern.conditions.RichOrCondition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public enum ConditionUtil {
     ;
@@ -23,7 +24,7 @@ public enum ConditionUtil {
         // and or 只支持 2 个
         List<IterativeCondition<T>> conditions = ruleDTO.getExpressions().stream()
                 .map(expressionDTO -> (IterativeCondition<T>) convertExpression(expressionDTO))
-                .toList();
+                .collect(Collectors.toList());
         // 每 2 个拼成一个 RichAndCondition
         return compositeByAndOr(conditions, ruleDTO.getType());
     }

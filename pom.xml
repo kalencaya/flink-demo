@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <target.java.version>17</target.java.version>
+        <target.java.version>1.8</target.java.version>
         <scala.binary.version>2.12</scala.binary.version>
         <maven.compiler.source>${target.java.version}</maven.compiler.source>
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
@@ -25,6 +25,7 @@
         <mysql.version>8.0.29</mysql.version>
         <jedis.version>7.0.0</jedis.version>
         <log4j.version>2.24.3</log4j.version>
+        <hadoop.version>3.4.1</hadoop.version>
     </properties>
 
     <modules>
@@ -99,6 +100,13 @@
 
             <dependency>
                 <groupId>org.apache.flink</groupId>
+                <artifactId>flink-table-api-java-bridge</artifactId>
+                <version>${flink.version}</version>
+                <scope>${flink.scope}</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.flink</groupId>
                 <artifactId>flink-cep</artifactId>
                 <version>${flink.version}</version>
             </dependency>
@@ -141,7 +149,7 @@
                 <version>3.2.1</version>
             </dependency>
 
-            <!--<dependency>
+            <dependency>
                 <groupId>org.apache.paimon</groupId>
                 <artifactId>paimon-flink-1.17</artifactId>
                 <version>${paimon.version}</version>
@@ -150,7 +158,7 @@
                 <groupId>org.apache.paimon</groupId>
                 <artifactId>paimon-s3</artifactId>
                 <version>${paimon.version}</version>
-            </dependency>-->
+            </dependency>
 
             <dependency>
                 <groupId>com.zaxxer</groupId>
@@ -172,6 +180,17 @@
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
                 <version>${jedis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-client</artifactId>
+                <version>${hadoop.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
