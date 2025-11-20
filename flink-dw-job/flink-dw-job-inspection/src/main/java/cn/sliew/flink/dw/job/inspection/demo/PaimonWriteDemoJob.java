@@ -1,5 +1,6 @@
 package cn.sliew.flink.dw.job.inspection.demo;
 
+import cn.sliew.flink.dw.job.inspection.util.PaimonUtil;
 import cn.sliew.flink.dw.support.util.ParameterToolUtil;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -11,9 +12,7 @@ import org.apache.flink.types.Row;
 import org.apache.flink.types.RowKind;
 import org.apache.paimon.catalog.Catalog;
 import org.apache.paimon.catalog.Identifier;
-import org.apache.paimon.flink.FlinkCatalogFactory;
 import org.apache.paimon.flink.sink.FlinkSinkBuilder;
-import org.apache.paimon.options.Options;
 import org.apache.paimon.schema.Schema;
 import org.apache.paimon.table.Table;
 
@@ -34,21 +33,14 @@ public class PaimonWriteDemoJob {
                                 Row.ofKind(RowKind.UPDATE_AFTER, "Alice", 100))
                         .returns(
                                 Types.ROW_NAMED(
-                                        new String[] {"name", "age"}, Types.STRING, Types.INT));
+                                        new String[]{"name", "age"}, Types.STRING, Types.INT));
 
-        Options catalogOptions = new Options();
-        catalogOptions.set("warehouse", "/Users/wangqi/Downloads/test");
-        catalogOptions.set("metastore", "filesystem");
-        Catalog catalog = FlinkCatalogFactory.createPaimonCatalog(catalogOptions);
+        Catalog catalog = PaimonUtil.getCatalogLoader().load();
         catalog.createDatabase("my_db", true);
 
-        Schema schema = Schema.newBuilder()
-                .column("name", org.apache.paimon.types.DataTypes.STRING())
-                .column("age", org.apache.paimon.types.DataTypes.INT())
-                .build();
-        Identifier identifier = Identifier.create("my_db", "T");
-        catalog.createTable(identifier, schema, true);
-
+        Schema schema = PaimonUtil.getTableSchema();
+        Identifier identifier = PaimonUtil.getTableIdentifier();
+        catalog.createTable(identifier, schema, false);
         Table table = catalog.getTable(identifier);
 
         DataType inputType =
