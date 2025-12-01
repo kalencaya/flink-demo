@@ -25,10 +25,6 @@ public class SimpleDemoJob {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        Configuration config = new Configuration();
-//        config.set(StateBackendOptions.STATE_BACKEND, "rocksdb");
-//        config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "job");
-//        env.configure(config);
 
         // 读取参数
         ParameterTool parameterTool = ParameterToolUtil.createParameterTool(args);
@@ -38,8 +34,7 @@ public class SimpleDemoJob {
         SingleOutputStreamOperator<Event> source = getSource(env);
         Pattern<Event, Event> pattern = Pattern.<Event>begin("start", AfterMatchSkipStrategy.noSkip())
                 .where(new AviatorCondition<>("action == 0"))
-                .followedBy("end")
-                .where(new AviatorCondition<>("action != 1"));
+                ;
 
         SingleOutputStreamOperator<String> process = CEP.pattern(source, pattern).process(new PatternProcessFunction<Event, String>() {
             @Override

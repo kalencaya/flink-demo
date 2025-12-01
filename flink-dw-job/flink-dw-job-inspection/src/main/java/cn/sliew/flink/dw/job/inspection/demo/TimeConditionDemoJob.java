@@ -1,5 +1,6 @@
 package cn.sliew.flink.dw.job.inspection.demo;
 
+import cn.sliew.flink.dw.cep.function.CustomPatternProcessFunction;
 import cn.sliew.flink.dw.job.inspection.condition.TimeCondition;
 import cn.sliew.flink.dw.support.util.ParameterToolUtil;
 import lombok.AllArgsConstructor;
@@ -11,18 +12,14 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.dynamic.condition.AviatorCondition;
 import org.apache.flink.cep.dynamic.impl.json.util.CepJsonUtils;
-import org.apache.flink.cep.functions.PatternProcessFunction;
 import org.apache.flink.cep.nfa.aftermatch.AfterMatchSkipStrategy;
 import org.apache.flink.cep.pattern.Pattern;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.util.Collector;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class TimeConditionDemoJob {
@@ -43,22 +40,11 @@ public class TimeConditionDemoJob {
                 // action != 1 and action != 0
                 .where(new AviatorCondition<>("action != 1"))
                 .where(new AviatorCondition<>("action != 0"))
-                .within(Time.of(1L, TimeUnit.MINUTES))
-                ;
+                .within(Time.of(1L, TimeUnit.MINUTES));
 
         System.out.println(CepJsonUtils.convertPatternToJSONString(pattern));
 
-        SingleOutputStreamOperator<String> process = CEP.pattern(source, pattern).process(new PatternProcessFunction<Event, String>() {
-            @Override
-            public void processMatch(Map<String, List<Event>> match, Context context, Collector<String> out) throws Exception {
-                StringBuilder sb = new StringBuilder();
-                sb.append("A match for Pattern is found. The event sequence: ");
-                for (Map.Entry<String, List<Event>> entry : match.entrySet()) {
-                    sb.append(entry.getKey()).append(": ").append(entry.getValue()).append(", ");
-                }
-                out.collect(sb.toString());
-            }
-        });
+        SingleOutputStreamOperator<String> process = CEP.pattern(source, pattern).process(new CustomPatternProcessFunction<>());
 
         process.print();
 
